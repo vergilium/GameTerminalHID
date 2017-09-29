@@ -27,6 +27,8 @@ main
 	EEPROM_Write
 	ArrCmp
 	UART1_Write
+	HID_Disable
+		USB_Disable_Module
 	HID_Write
 		Gen_Write
 			USB_Handle_Busy

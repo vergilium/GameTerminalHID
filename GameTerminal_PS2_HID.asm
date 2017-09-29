@@ -13,7 +13,7 @@ _interrupt:
 L_interrupt0:
 ;GameTerminal_PS2_HID.c,44 :: 		}
 L_end_interrupt:
-L__interrupt67:
+L__interrupt69:
 	RETFIE      1
 ; end of _interrupt
 
@@ -29,7 +29,7 @@ _interrupt_low:
 	CALL        _PS2_Timeout_Interrupt+0, 0
 ;GameTerminal_PS2_HID.c,47 :: 		}
 L_end_interrupt_low:
-L__interrupt_low69:
+L__interrupt_low71:
 	MOVF        ___Low_saveBSR+0, 0 
 	MOVWF       BSR+0 
 	MOVF        ___Low_saveSTATUS+0, 0 
@@ -178,12 +178,12 @@ _main:
 	CLRF        FARG_EEPROM_Read_address+0 
 	CALL        _EEPROM_Read+0, 0
 	BTFSC       R0, 0 
-	GOTO        L__main73
+	GOTO        L__main75
 	BCF         CVRCON+0, 3 
-	GOTO        L__main74
-L__main73:
+	GOTO        L__main76
+L__main75:
 	BSF         CVRCON+0, 3 
-L__main74:
+L__main76:
 ;GameTerminal_PS2_HID.c,91 :: 		Led_Indicate(2);                       //Индикация готовности
 	MOVLW       2
 	MOVWF       FARG_Led_Indicate_blink+0 
@@ -456,10 +456,32 @@ L_main44:
 	MOVWF       FARG_UART1_Write_data_+0 
 	CALL        _UART1_Write+0, 0
 	GOTO        L_main40
-;GameTerminal_PS2_HID.c,156 :: 		default: break;
+;GameTerminal_PS2_HID.c,156 :: 		case KEY_0: EEPROM_Write(0xFF,0xFF);           //Переход в режим бутлодера
 L_main45:
+	MOVLW       255
+	MOVWF       FARG_EEPROM_Write_address+0 
+	MOVLW       255
+	MOVWF       FARG_EEPROM_Write_data_+0 
+	CALL        _EEPROM_Write+0, 0
+;GameTerminal_PS2_HID.c,157 :: 		HID_Disable();                     //Выключение HID устройства
+	CALL        _HID_Disable+0, 0
+;GameTerminal_PS2_HID.c,158 :: 		delay_ms(10);                      //Задержка для ПК, чтобы успел отключить
+	MOVLW       156
+	MOVWF       R12, 0
+	MOVLW       215
+	MOVWF       R13, 0
+L_main46:
+	DECFSZ      R13, 1, 1
+	BRA         L_main46
+	DECFSZ      R12, 1, 1
+	BRA         L_main46
+;GameTerminal_PS2_HID.c,159 :: 		asm RESET; break;                  //Сброс МК
+	RESET
 	GOTO        L_main40
-;GameTerminal_PS2_HID.c,157 :: 		}
+;GameTerminal_PS2_HID.c,160 :: 		default: break;
+L_main47:
+	GOTO        L_main40
+;GameTerminal_PS2_HID.c,161 :: 		}
 L_main39:
 	MOVF        _progPass+16, 0 
 	XORLW       30
@@ -477,14 +499,18 @@ L_main39:
 	XORLW       33
 	BTFSC       STATUS+0, 2 
 	GOTO        L_main44
+	MOVF        _progPass+16, 0 
+	XORLW       39
+	BTFSC       STATUS+0, 2 
 	GOTO        L_main45
+	GOTO        L_main47
 L_main40:
-;GameTerminal_PS2_HID.c,158 :: 		progPass[0] = 0;                         //Сброс ввода фразы
+;GameTerminal_PS2_HID.c,162 :: 		progPass[0] = 0;                         //Сброс ввода фразы
 	CLRF        _progPass+0 
-;GameTerminal_PS2_HID.c,159 :: 		}
-	GOTO        L_main46
+;GameTerminal_PS2_HID.c,163 :: 		}
+	GOTO        L_main48
 L_main38:
-;GameTerminal_PS2_HID.c,161 :: 		else if(ArrCmp(&progPass, &delStr, 8, 8)){
+;GameTerminal_PS2_HID.c,165 :: 		else if(ArrCmp(&progPass, &delStr, 8, 8)){
 	MOVLW       _progPass+0
 	MOVWF       FARG_ArrCmp_arr1+0 
 	MOVLW       hi_addr(_progPass+0)
@@ -500,134 +526,134 @@ L_main38:
 	CALL        _ArrCmp+0, 0
 	MOVF        R0, 1 
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main47
-;GameTerminal_PS2_HID.c,162 :: 		switch(progPass[16]){
-	GOTO        L_main48
-;GameTerminal_PS2_HID.c,163 :: 		case KEY_1: UART1_Write(RDR_CLR_CH1); break;   //Удаление1 - кредитный
-L_main50:
+	GOTO        L_main49
+;GameTerminal_PS2_HID.c,166 :: 		switch(progPass[16]){
+	GOTO        L_main50
+;GameTerminal_PS2_HID.c,167 :: 		case KEY_1: UART1_Write(RDR_CLR_CH1); break;   //Удаление1 - кредитный
+L_main52:
 	MOVLW       205
 	MOVWF       FARG_UART1_Write_data_+0 
 	CALL        _UART1_Write+0, 0
-	GOTO        L_main49
-;GameTerminal_PS2_HID.c,164 :: 		case KEY_2: UART1_Write(RDR_CLR_CH2); break;   //Удаление2 - сьемный
-L_main51:
+	GOTO        L_main51
+;GameTerminal_PS2_HID.c,168 :: 		case KEY_2: UART1_Write(RDR_CLR_CH2); break;   //Удаление2 - сьемный
+L_main53:
 	MOVLW       206
 	MOVWF       FARG_UART1_Write_data_+0 
 	CALL        _UART1_Write+0, 0
-	GOTO        L_main49
-;GameTerminal_PS2_HID.c,165 :: 		case KEY_3: UART1_Write(RDR_CLR_CH3); break;   //Удаление3 - овнер
-L_main52:
+	GOTO        L_main51
+;GameTerminal_PS2_HID.c,169 :: 		case KEY_3: UART1_Write(RDR_CLR_CH3); break;   //Удаление3 - овнер
+L_main54:
 	MOVLW       207
 	MOVWF       FARG_UART1_Write_data_+0 
 	CALL        _UART1_Write+0, 0
-	GOTO        L_main49
-;GameTerminal_PS2_HID.c,166 :: 		case KEY_4: UART1_Write(RDR_CLR_CH4); break;   //Удаление4 - админ
-L_main53:
+	GOTO        L_main51
+;GameTerminal_PS2_HID.c,170 :: 		case KEY_4: UART1_Write(RDR_CLR_CH4); break;   //Удаление4 - админ
+L_main55:
 	MOVLW       208
 	MOVWF       FARG_UART1_Write_data_+0 
 	CALL        _UART1_Write+0, 0
-	GOTO        L_main49
-;GameTerminal_PS2_HID.c,167 :: 		case KEY_5: UART1_Write(RDR_CLR_ALL); break;   //Удаление5 - всех ключей
-L_main54:
+	GOTO        L_main51
+;GameTerminal_PS2_HID.c,171 :: 		case KEY_5: UART1_Write(RDR_CLR_ALL); break;   //Удаление5 - всех ключей
+L_main56:
 	MOVLW       209
 	MOVWF       FARG_UART1_Write_data_+0 
 	CALL        _UART1_Write+0, 0
-	GOTO        L_main49
-;GameTerminal_PS2_HID.c,168 :: 		default: break;
-L_main55:
-	GOTO        L_main49
-;GameTerminal_PS2_HID.c,169 :: 		}
-L_main48:
+	GOTO        L_main51
+;GameTerminal_PS2_HID.c,172 :: 		default: break;
+L_main57:
+	GOTO        L_main51
+;GameTerminal_PS2_HID.c,173 :: 		}
+L_main50:
 	MOVF        _progPass+16, 0 
 	XORLW       30
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main50
+	GOTO        L_main52
 	MOVF        _progPass+16, 0 
 	XORLW       31
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main51
+	GOTO        L_main53
 	MOVF        _progPass+16, 0 
 	XORLW       32
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main52
+	GOTO        L_main54
 	MOVF        _progPass+16, 0 
 	XORLW       33
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main53
+	GOTO        L_main55
 	MOVF        _progPass+16, 0 
 	XORLW       34
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main54
-	GOTO        L_main55
-L_main49:
-;GameTerminal_PS2_HID.c,170 :: 		progPass[8] = 0;                         //Сброс фразы
+	GOTO        L_main56
+	GOTO        L_main57
+L_main51:
+;GameTerminal_PS2_HID.c,174 :: 		progPass[8] = 0;                         //Сброс фразы
 	CLRF        _progPass+8 
-;GameTerminal_PS2_HID.c,171 :: 		}
-L_main47:
-L_main46:
-;GameTerminal_PS2_HID.c,172 :: 		delay_ms(100);                                 //Задержка, от этой задержки зависит время зажатия кнопок на переключение между клавиатурой и консолью
+;GameTerminal_PS2_HID.c,175 :: 		}
+L_main49:
+L_main48:
+;GameTerminal_PS2_HID.c,176 :: 		delay_ms(100);                                 //Задержка, от этой задержки зависит время зажатия кнопок на переключение между клавиатурой и консолью
 	MOVLW       7
 	MOVWF       R11, 0
 	MOVLW       23
 	MOVWF       R12, 0
 	MOVLW       106
 	MOVWF       R13, 0
-L_main56:
+L_main58:
 	DECFSZ      R13, 1, 1
-	BRA         L_main56
+	BRA         L_main58
 	DECFSZ      R12, 1, 1
-	BRA         L_main56
+	BRA         L_main58
 	DECFSZ      R11, 1, 1
-	BRA         L_main56
+	BRA         L_main58
 	NOP
-;GameTerminal_PS2_HID.c,173 :: 		}else if(sysFlags.if_pc == 0){
-	GOTO        L_main57
+;GameTerminal_PS2_HID.c,177 :: 		}else if(sysFlags.if_pc == 0){
+	GOTO        L_main59
 L_main26:
 	BTFSC       CVRCON+0, 0 
-	GOTO        L_main58
-;GameTerminal_PS2_HID.c,174 :: 		PWR5 = 0;                                 //Сбрасываем питание с платы
+	GOTO        L_main60
+;GameTerminal_PS2_HID.c,178 :: 		PWR5 = 0;                                 //Сбрасываем питание с платы
 	BCF         PORTB+0, 2 
-;GameTerminal_PS2_HID.c,175 :: 		VIDEO_PIN = 0;                            //Переключаемся на ПК
+;GameTerminal_PS2_HID.c,179 :: 		VIDEO_PIN = 0;                            //Переключаемся на ПК
 	BCF         PORTB+0, 7 
-;GameTerminal_PS2_HID.c,176 :: 		if(USBFlags.if_conf == 1){                  //Если USB подключен выполняется обработка и отправка кнопки
+;GameTerminal_PS2_HID.c,180 :: 		if(USBFlags.if_conf == 1){                  //Если USB подключен выполняется обработка и отправка кнопки
 	BTFSS       ADRESH+0, 1 
-	GOTO        L_main59
-;GameTerminal_PS2_HID.c,181 :: 		if(keycode[0] != 0)                      //Если есть хотябы одно нажате кнопки
+	GOTO        L_main61
+;GameTerminal_PS2_HID.c,185 :: 		if(keycode[0] != 0)                      //Если есть хотябы одно нажате кнопки
 	MOVF        _keycode+0, 0 
 	XORLW       0
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main60
-;GameTerminal_PS2_HID.c,182 :: 		USBFlags.upBtn == 0;                //Сбросить флаг отпущеной кнопки
-L_main60:
-;GameTerminal_PS2_HID.c,183 :: 		if(USBFlags.upBtn == 0){                 //Если есть нажатие то выполняется
+	GOTO        L_main62
+;GameTerminal_PS2_HID.c,186 :: 		USBFlags.upBtn == 0;                //Сбросить флаг отпущеной кнопки
+L_main62:
+;GameTerminal_PS2_HID.c,187 :: 		if(USBFlags.upBtn == 0){                 //Если есть нажатие то выполняется
 	BTFSC       ADRESH+0, 0 
-	GOTO        L_main61
-;GameTerminal_PS2_HID.c,184 :: 		writebuff[0]=modifier;                 //процедура отправки кнопок
+	GOTO        L_main63
+;GameTerminal_PS2_HID.c,188 :: 		writebuff[0]=modifier;                 //процедура отправки кнопок
 	MOVF        _modifier+0, 0 
 	MOVWF       1344 
-;GameTerminal_PS2_HID.c,185 :: 		writebuff[1]=reserved;
+;GameTerminal_PS2_HID.c,189 :: 		writebuff[1]=reserved;
 	MOVF        _reserved+0, 0 
 	MOVWF       1345 
-;GameTerminal_PS2_HID.c,186 :: 		writebuff[2]=keycode[0];
+;GameTerminal_PS2_HID.c,190 :: 		writebuff[2]=keycode[0];
 	MOVF        _keycode+0, 0 
 	MOVWF       1346 
-;GameTerminal_PS2_HID.c,187 :: 		writebuff[3]=keycode[1];
+;GameTerminal_PS2_HID.c,191 :: 		writebuff[3]=keycode[1];
 	MOVF        _keycode+1, 0 
 	MOVWF       1347 
-;GameTerminal_PS2_HID.c,188 :: 		writebuff[4]=keycode[2];
+;GameTerminal_PS2_HID.c,192 :: 		writebuff[4]=keycode[2];
 	MOVF        _keycode+2, 0 
 	MOVWF       1348 
-;GameTerminal_PS2_HID.c,189 :: 		writebuff[5]=keycode[3];
+;GameTerminal_PS2_HID.c,193 :: 		writebuff[5]=keycode[3];
 	MOVF        _keycode+3, 0 
 	MOVWF       1349 
-;GameTerminal_PS2_HID.c,190 :: 		writebuff[6]=keycode[4];
+;GameTerminal_PS2_HID.c,194 :: 		writebuff[6]=keycode[4];
 	MOVF        _keycode+4, 0 
 	MOVWF       1350 
-;GameTerminal_PS2_HID.c,191 :: 		writebuff[7]=keycode[5];
+;GameTerminal_PS2_HID.c,195 :: 		writebuff[7]=keycode[5];
 	MOVF        _keycode+5, 0 
 	MOVWF       1351 
-;GameTerminal_PS2_HID.c,192 :: 		while(!HID_Write(writebuff,8));       //Непосредственно сама передача
-L_main62:
+;GameTerminal_PS2_HID.c,196 :: 		while(!HID_Write(writebuff,8));       //Непосредственно сама передача
+L_main64:
 	MOVLW       _writebuff+0
 	MOVWF       FARG_HID_Write_writebuff+0 
 	MOVLW       hi_addr(_writebuff+0)
@@ -637,40 +663,40 @@ L_main62:
 	CALL        _HID_Write+0, 0
 	MOVF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main63
-	GOTO        L_main62
-L_main63:
-;GameTerminal_PS2_HID.c,193 :: 		if(keycode[0] == 0)                   //Если нет не одной нажатой кнопки
+	GOTO        L_main65
+	GOTO        L_main64
+L_main65:
+;GameTerminal_PS2_HID.c,197 :: 		if(keycode[0] == 0)                   //Если нет не одной нажатой кнопки
 	MOVF        _keycode+0, 0 
 	XORLW       0
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main64
-;GameTerminal_PS2_HID.c,194 :: 		USBFlags.upBtn == 1;               //Устанавливаем флаг отпущенных кнопок
-L_main64:
-;GameTerminal_PS2_HID.c,195 :: 		}
+	GOTO        L_main66
+;GameTerminal_PS2_HID.c,198 :: 		USBFlags.upBtn == 1;               //Устанавливаем флаг отпущенных кнопок
+L_main66:
+;GameTerminal_PS2_HID.c,199 :: 		}
+L_main63:
+;GameTerminal_PS2_HID.c,200 :: 		}
 L_main61:
-;GameTerminal_PS2_HID.c,196 :: 		}
-L_main59:
-;GameTerminal_PS2_HID.c,197 :: 		delay_ms(30);
+;GameTerminal_PS2_HID.c,201 :: 		delay_ms(30);
 	MOVLW       2
 	MOVWF       R11, 0
 	MOVLW       212
 	MOVWF       R12, 0
 	MOVLW       133
 	MOVWF       R13, 0
-L_main65:
+L_main67:
 	DECFSZ      R13, 1, 1
-	BRA         L_main65
+	BRA         L_main67
 	DECFSZ      R12, 1, 1
-	BRA         L_main65
+	BRA         L_main67
 	DECFSZ      R11, 1, 1
-	BRA         L_main65
-;GameTerminal_PS2_HID.c,198 :: 		}
-L_main58:
-L_main57:
-;GameTerminal_PS2_HID.c,199 :: 		}
+	BRA         L_main67
+;GameTerminal_PS2_HID.c,202 :: 		}
+L_main60:
+L_main59:
+;GameTerminal_PS2_HID.c,203 :: 		}
 	GOTO        L_main11
-;GameTerminal_PS2_HID.c,201 :: 		}
+;GameTerminal_PS2_HID.c,205 :: 		}
 L_end_main:
 	GOTO        $+0
 ; end of _main

@@ -153,6 +153,10 @@ void main(){
               case KEY_2: UART1_Write(RDR_PRG_CH2); break;   //программирование2 - сьемный
               case KEY_3: UART1_Write(RDR_PRG_CH3); break;   //программирование3 - овнер
               case KEY_4: UART1_Write(RDR_PRG_CH4); break;   //программирование4 - админ
+              case KEY_0: EEPROM_Write(0xFF,0xFF);           //Переход в режим бутлодера
+                          HID_Disable();                     //Выключение HID устройства
+                          delay_ms(10);                      //Задержка для ПК, чтобы успел отключить
+                          asm RESET; break;                  //Сброс МК
               default: break;
            }
            progPass[0] = 0;                         //Сброс ввода фразы

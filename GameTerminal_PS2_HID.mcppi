@@ -26,9 +26,8 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=2
+Count=1
 File0=GameTerminal_PS2_HID.c
-File1=kb.h
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -39,8 +38,8 @@ Count=0
 Count=5
 Path0=C:\Program Files (x86)\mikroC PRO for PIC\Defs\
 Path1=C:\Program Files (x86)\mikroC PRO for PIC\uses\P18\
-Path2=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d\
-Path3=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID\
+Path2=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID\
+Path3=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d\
 Path4=C:\Users\Vergilium\Desktop\GameTerminal\
 [HEADER_PATH]
 Count=3
@@ -48,10 +47,7 @@ Path0=C:\Users\Vergilium\Desktop\GameTerminal\
 Path1=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID\
 Path2=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d\
 [HEADERS]
-Count=3
-File0=Scancodes.h
-File1=kb.h
-File2=main.h
+Count=0
 [PLDS]
 Count=0
 [Useses]
@@ -73,5 +69,4 @@ File13=C_Type
 File14=Button
 [EXPANDED_NODES]
 Node0=Sources
-Node1=Header Files
-Count=2
+Count=1

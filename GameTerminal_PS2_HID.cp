@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d/GameTerminal_PS2_HID.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
 #line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
 
 
@@ -81,7 +81,7 @@ typedef unsigned long int uintmax_t;
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
-#line 16 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d/GameTerminal_PS2_HID.c"
+#line 16 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
 uint8_t readbuff[64] absolute 0x500;
 uint8_t writebuff[64] absolute 0x540;
 uint8_t modifier=0b00000000;
@@ -222,6 +222,10 @@ void main(){
  case  0x1F : UART1_Write( 202 ); break;
  case  0x20 : UART1_Write( 203 ); break;
  case  0x21 : UART1_Write( 204 ); break;
+ case  0x27 : EEPROM_Write(0xFF,0xFF);
+ HID_Disable();
+ delay_ms(10);
+ asm RESET; break;
  default: break;
  }
  progPass[0] = 0;

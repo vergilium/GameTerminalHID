@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d/kb.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-302429613a14668f2cce4eee0f078558fbc7a17d/kb.h"
 #line 118 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-302429613a14668f2cce4eee0f078558fbc7a17d/kb.h"
  void init_kb(void);
@@ -177,7 +177,7 @@ const code unsigned char dvFlags[] = {
 0x40,
 0x80,
 };
-#line 4 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d/kb.c"
+#line 4 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 unsigned char bitcount;
 unsigned char keyCnt;
 unsigned char kbWriteBuff;
@@ -278,7 +278,7 @@ static unsigned char keyData;
  TRISA.RA4 = 1;
  sysFlags.kb_rw = 0;
  Reset_timeuot();
-#line 111 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-302429613a14668f2cce4eee0f078558fbc7a17d/kb.c"
+#line 111 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
  }
  }
 
