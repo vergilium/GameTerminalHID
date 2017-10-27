@@ -1,12 +1,56 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-302429613a14668f2cce4eee0f078558fbc7a17d/kb.h"
-#line 118 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-302429613a14668f2cce4eee0f078558fbc7a17d/kb.h"
- void init_kb(void);
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+#line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
+
+
+
+
+typedef signed char int8_t;
+typedef signed int int16_t;
+typedef signed long int int32_t;
+
+
+typedef unsigned char uint8_t;
+typedef unsigned int uint16_t;
+typedef unsigned long int uint32_t;
+
+
+typedef signed char int_least8_t;
+typedef signed int int_least16_t;
+typedef signed long int int_least32_t;
+
+
+typedef unsigned char uint_least8_t;
+typedef unsigned int uint_least16_t;
+typedef unsigned long int uint_least32_t;
+
+
+
+typedef signed char int_fast8_t;
+typedef signed int int_fast16_t;
+typedef signed long int int_fast32_t;
+
+
+typedef unsigned char uint_fast8_t;
+typedef unsigned int uint_fast16_t;
+typedef unsigned long int uint_fast32_t;
+
+
+typedef signed int intptr_t;
+typedef unsigned int uintptr_t;
+
+
+typedef signed long int intmax_t;
+typedef unsigned long int uintmax_t;
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
+#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
+ void Init_PS2(void);
+ unsigned char Reset_PS2(void);
+ unsigned char GetState_PS2(void);
  void KeyDecode(unsigned char);
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-302429613a14668f2cce4eee0f078558fbc7a17d/scancodes.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/scancodes.h"
 
 
 const code unsigned char scanCode[] = {
@@ -177,58 +221,87 @@ const code unsigned char dvFlags[] = {
 0x40,
 0x80,
 };
-#line 4 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
-unsigned char bitcount;
-unsigned char keyCnt;
-unsigned char kbWriteBuff;
-extern unsigned char keycode[6];
-extern unsigned char modifier;
-extern unsigned char progPass[16];
+#line 5 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+extern uint8_t keycode[6];
+extern uint8_t modifier;
+extern uint8_t progPass[ 32 ];
 
-struct FLG{
+uint8_t bitcount;
+uint8_t keyCnt;
+uint8_t kbWriteBuff;
+
+struct SFLG{
  unsigned if_pc: 1;
- unsigned if_func: 1;
- unsigned if_up: 1;
  unsigned kb_mode: 1;
- unsigned kb_rw: 1;
- unsigned kb_parity: 1;
 } sysFlags at CVRCON;
 
+struct KFLG{
+ unsigned if_conf : 1;
+ unsigned if_func : 1;
+ unsigned if_up : 1;
+ unsigned kb_rw : 1;
+ unsigned kb_parity: 1;
+} keyFlags at ADRESH;
+
+struct KYB{
+ unsigned kbMode: 4;
+ unsigned request: 4;
+} KYBState = {0};
 
 
 
-void init_kb(void){
- unsigned char i;
+void Init_PS2(void){
+ uint8_t i;
  bitcount = 11;
 
  INTCON2.INTEDG1 = 0;
  INTCON3.INT1IF = 0;
  INTCON3 |= (1<<INT1IP)|(1<<INT1IE);
 
- INTCON2.TMR0IP = 0;
- T0CON = (1<<TMR0ON)|(1<<T08BIT)|(0<<T0CS)|(0<<PSA)|(1<<T0PS2)|(1<<T0PS1)|(1<<T0PS0);
- TMR0L = 209;
- INTCON.TMR0IF = 0;
+ TMR2IP_bit = 1;
+ TMR2IF_bit = 0;
+ T2CON = (1<<T2OUTPS3)|(1<<T2OUTPS1)|(1<<T2OUTPS0)|(1<<T2CKPS0);
+ PR2 = 250;
 
- INTCON |= (1<<TMR0IE);
- for (i=0; i<=5; i++){
- keycode[i] = 0;
- }
+ TMR2IE_bit = 1;
+
+ for(i=0; i<=5; i++) keycode[i] = 0;
+
  keyCnt = 0;
- CVRCON = 0;
+ ADRESH = 0;
 }
 
 
 
 void Reset_timeuot (void){
- TMR0L = 209;
- INTCON.TMR0IF = 0;
- T0CON.TMR0ON = 0;
+ TMR2ON_bit = 0;
+ TMR2IF_bit = 0;
+ PR2 = 250;
 }
 
 
+uint8_t Reset_PS2(void){
+ uint8_t timeout = 10;
 
-unsigned char parity(unsigned char x){
+ PS2_Send(0xFF);
+ delay_ms(300);
+ while(timeout != 0){
+ if(KYBState.request ==  1 ){
+ KYBState.kbMode =  1 ;
+ return 1;
+ } else if (KYBState.request ==  4 ){
+ KYBState.kbMode =  2 ;
+ return 0;
+ }
+ timeout--;
+ delay_ms(10);
+ }
+ KYBState.kbMode =  0 ;
+ KYBState.request =  0 ;
+ return 0;
+}
+#line 91 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+uint8_t parity(uint8_t x){
 x ^= x >> 8;
 x ^= x >> 4;
 x ^= x >> 2;
@@ -239,11 +312,11 @@ return ~(x & 1);
 
 
 void PS2_interrupt(void) {
-static unsigned char keyData;
+static uint8_t keyData;
  if(INTCON3.INT1IE == 1 && INTCON3.INT1IF == 1){
  INTCON3.INT1IF = 0;
- T0CON.TMR0ON = 1;
- if(sysFlags.kb_rw == 0){
+ TMR2ON_bit = 1;
+ if(keyFlags.kb_rw == 0){
  if (INTCON2.INTEDG1 == 0){
  if(bitcount < 11 && bitcount > 2) {
  keyData = keyData >> 1;
@@ -268,7 +341,7 @@ static unsigned char keyData;
  kbWriteBuff = kbWriteBuff >> 1;
  bitcount --;
  } else if(bitcount == 2){
-  PORTA.RA4  = sysFlags.kb_parity;
+  PORTA.RA4  = keyFlags.kb_parity;
  bitcount --;
  } else if(bitcount == 1){
   PORTA.RA4  = 1;
@@ -276,9 +349,9 @@ static unsigned char keyData;
  } else if(bitcount == 0){
  bitcount = 11;
  TRISA.RA4 = 1;
- sysFlags.kb_rw = 0;
+ keyFlags.kb_rw = 0;
  Reset_timeuot();
-#line 111 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
+#line 148 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
  }
  }
 
@@ -288,10 +361,10 @@ static unsigned char keyData;
 
 
 
-unsigned char PS2_Send(unsigned char sData){
+uint8_t PS2_Send(uint8_t sData){
  if(bitcount == 11){
  kbWriteBuff = sData;
- sysFlags.kb_parity = parity(kbWriteBuff);
+ keyFlags.kb_parity = parity(kbWriteBuff);
 
  INTCON3.INT1IE = 0;
   PORTB.RB1  = 0;
@@ -303,10 +376,11 @@ unsigned char PS2_Send(unsigned char sData){
  delay_ms(1);
   PORTB.RB1  = 1;
  TRISB.RB1 = 1;
- sysFlags.kb_rw = 1;
+ keyFlags.kb_rw = 1;
  bitcount = 10;
  INTCON3.INT1IF = 0;
  INTCON3.INT1IE = 1;
+ TMR2ON_bit = 1;
  return 1;
  } else return 0;
 }
@@ -314,17 +388,22 @@ unsigned char PS2_Send(unsigned char sData){
 
 
 void PS2_Timeout_Interrupt(){
- if(INTCON.TMR0IE && INTCON.TMR0IF){
- if(sysFlags.kb_rw == 1) { sysFlags.kb_rw = 0; kbWriteBuff = 0; }
- bitcount = 11;
+ if(TMR2IF_bit){
  Reset_timeuot();
+ if(keyFlags.kb_rw == 1) {
+ keyFlags.kb_rw = 0;
+ kbWriteBuff = 0;
+  PORTA.RA4  = 1;
+ TRISA.RA4 = 1;
+ }
+ bitcount = 11;
  }
 }
 
 
 
-unsigned char inArray(unsigned char value){
- unsigned char i;
+uint8_t inArray(uint8_t value){
+ uint8_t i;
  for(i=0; i<=5; i++){
  if(keycode[i] == value){
  return i+1;
@@ -335,7 +414,7 @@ unsigned char inArray(unsigned char value){
 
 
 
-void Set_BRDButton (unsigned char key, unsigned char upDown){
+void Set_BRDButton (uint8_t key, uint8_t upDown){
  switch (key){
  case  0x3E  : if(sysFlags.kb_mode == 0) break;
  case  0x1E  :
@@ -375,33 +454,41 @@ void Set_BRDButton (unsigned char key, unsigned char upDown){
 
 
 
-void SetPass (unsigned char key){
- unsigned char i;
- for(i=0; i<17; i++){
+void SetPass (uint8_t key){
+ uint8_t i;
+
+ for(i=0; i< 32 ; i++){
  progPass[i] = progPass[i+1];
  }
- progPass[16] = key;
+ if((modifier & 0x22) != 0)
+ progPass[ 32 -1] = key | 0x80;
+ else
+ progPass[ 32 -1] = key;
 }
 
 
 
-void KeyDecode(unsigned char sc){
-static unsigned char keyPos;
-unsigned char i, key=0;
+void KeyDecode(uint8_t sc){
+static uint8_t keyPos;
+uint8_t i, key=0;
 
 
  switch(sc){
- case 0xE0 : sysFlags.if_func = 1; break;
- case 0xF0 : sysFlags.if_up = 1; break;
+ case  0xE0  : keyFlags.if_func = 1; break;
+ case  0xF0  : keyFlags.if_up = 1; break;
+ case  0xAA  : KYBState.request =  1 ; break;
+ case  0xFE  : KYBState.request =  3 ; break;
+ case  0xFC  : KYBState.request =  4 ; break;
+ case  0xFA  : KYBState.request =  2 ; break;
  default : if(sc > 0 && sc < 0x84){
- if(sysFlags.if_func == 1){
+ if(keyFlags.if_func == 1){
  for(i=0; i<sizeof(funCode)/2; i++){
  if(funCode[i][0] == sc){
  key = funCode[i][1];
  break;
  }
  }
- sysFlags.if_func = 0;
+ keyFlags.if_func = 0;
  } else {
  key = scanCode[sc];
  }
@@ -410,7 +497,7 @@ unsigned char i, key=0;
 
 
  if(key >= 0xE0 && key <= 0xE7){
- if(sysFlags.if_up == 1){
+ if(keyFlags.if_up == 1){
  modifier &= ~dvFlags[key & 0x0F];
  } else
  modifier |= dvFlags[key & 0x0F];
@@ -418,20 +505,22 @@ unsigned char i, key=0;
 
  keyPos = inArray(key);
  if(keyPos){
- if(sysFlags.if_up){
+ if(keyFlags.if_up){
  if(sysFlags.if_pc == 1) Set_BRDButton(key, 0);
  for(i=keyPos-1; i<5; i++){
  keycode[i] = keycode[i+1];
  }
  keyCnt--;
- sysFlags.if_up = 0;
+ keyFlags.if_up = 0;
  }
 
  }else if(keyCnt<6){
  keycode[keyCnt] = key;
  keyCnt++;
  if(sysFlags.if_pc == 1) Set_BRDButton(key, 1);
+ if(key >=  0x04  && key <=  0x27 ){
  SetPass(key);
+ }
  }
  }
  for (i=keycnt; i<=5; i++){
