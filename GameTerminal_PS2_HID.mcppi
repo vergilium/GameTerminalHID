@@ -28,9 +28,8 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=2
-File0=..\GameTerminalHID\GameTerminal_PS2_HID.c
-File1=GameTerminal_PS2_HID.c
+Count=1
+File0=GameTerminal_PS2_HID.c
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -41,8 +40,8 @@ Count=0
 Count=6
 Path0=C:\Program Files (x86)\mikroC PRO for PIC\Defs\
 Path1=C:\Program Files (x86)\mikroC PRO for PIC\uses\P18\
-Path2=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID-master\
-Path3=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID\
+Path2=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID\
+Path3=C:\Users\Vergilium\Desktop\GameTerminal\GameTerminalHID-master\
 Path4=C:\Users\Vergilium\Desktop\GameTerminal\
 Path5=C:\Program Files (x86)\mikroC PRO for PIC\Packages\USB_Device_PIC\Uses\
 [HEADER_PATH]

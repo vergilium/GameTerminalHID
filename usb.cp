@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/usb.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/usb.c"
 #line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
 
 
@@ -41,7 +41,7 @@ typedef unsigned int uintptr_t;
 
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/usb.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/usb.h"
 
 
 
@@ -57,7 +57,7 @@ void SendNoKeys (void);
 void SendKey (uint8_t, uint8_t);
 uint8_t SendKeys (uint8_t *, uint8_t);
 uint8_t USB_GetLEDs (void);
-#line 4 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/usb.c"
+#line 4 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/usb.c"
 uint8_t readbuff[64] absolute 0x500;
 uint8_t writebuff[64] absolute 0x540;
 uint8_t reserved=0;

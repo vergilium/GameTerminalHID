@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/GameTerminal_PS2_HID.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
 #line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
 
 
@@ -41,8 +41,8 @@ typedef unsigned int uintptr_t;
 
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/main.h"
-#line 19 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/main.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/main.h"
+#line 19 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/main.h"
  const code unsigned char progStr[] = {
  0x0A,
  0x0B,
@@ -72,7 +72,7 @@ typedef unsigned long int uintmax_t;
  0x05,
  0x17
  };
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/usb.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/usb.h"
 
 
 
@@ -88,8 +88,8 @@ void SendNoKeys (void);
 void SendKey (uint8_t, uint8_t);
 uint8_t SendKeys (uint8_t *, uint8_t);
 uint8_t USB_GetLEDs (void);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
-#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
+#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
  void Init_PS2(void);
  unsigned char Reset_PS2(void);
  unsigned char GetState_PS2(void);
@@ -97,7 +97,7 @@ uint8_t USB_GetLEDs (void);
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/password.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/password.h"
 
 
 
@@ -106,7 +106,7 @@ uint8_t USB_GetLEDs (void);
 void SendPassword (uint8_t);
 void EEPROM_SavePassword (uint8_t *, uint8_t, uint8_t);
 void EEPROM_ClearPassword (uint8_t, uint8_t);
-#line 20 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/GameTerminal_PS2_HID.c"
+#line 20 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
 uint8_t keycode[6];
 uint8_t modifier=0b00000000;
 uint8_t progPass[ 32 ] = {0};
@@ -123,7 +123,7 @@ void interrupt(){
  PS2_interrupt();
  PS2_Timeout_Interrupt();
 }
-#line 40 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/GameTerminal_PS2_HID.c"
+#line 40 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
 void USBDev_EventHandler(uint8_t event) {
  switch(event){
  case _USB_DEV_EVENT_CONFIGURED : USBFlags.if_conf = 1; break;
@@ -239,7 +239,7 @@ void main(){
   PORTB.RB2  = 1;
   PORTB.RB7  = 1;
  sysFlags.if_pc = 1;
- delay_ms(300);
+ delay_ms(3000);
  }
   PORTC.RC2  = 0;
  }
@@ -345,7 +345,7 @@ void main(){
  delay_ms(10);
  PS2_Send( 0x00 );
  uart_write( 30 );
- delay_ms(300);
+ delay_ms(400);
  uart_write( 30 );
  }
  sysFlags.wr_pass = 0;

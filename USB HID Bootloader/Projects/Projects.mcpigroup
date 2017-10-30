@@ -1,0 +1,6 @@
+[PROJECTS]
+Count=2
+Project0=PIC18F\USB HID Bootloader.mcppi
+Project1=PIC18FJ\USB HID Bootloader.mcppi
+[ActiveProject]
+Index=0

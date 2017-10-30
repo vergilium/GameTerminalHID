@@ -152,7 +152,7 @@ void main(){
               PWR5 = 1;                          //Включить 5В питание платы
               VIDEO_PIN = 1;                     //Переключить монитор на плату
               sysFlags.if_pc = 1;                //Запоминаем что мы на плате
-              delay_ms(300);
+              delay_ms(3000);
            }
            LED_PIN = 0;
         }
@@ -258,7 +258,7 @@ void main(){
               delay_ms(10);
               PS2_Send(SET_OFF_LED);
               uart_write(RDR_PRG_END);                                   //Пикаем два раза
-              delay_ms(300);
+              delay_ms(600);
               uart_write(RDR_PRG_END);
            }
            sysFlags.wr_pass = 0;                                         //сбрасываем флаг записи пароля

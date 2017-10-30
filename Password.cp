@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/Password.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/Password.c"
 #line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
 
 
@@ -41,7 +41,7 @@ typedef unsigned int uintptr_t;
 
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/password.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/password.h"
 
 
 
@@ -50,7 +50,7 @@ typedef unsigned long int uintmax_t;
 void SendPassword (uint8_t);
 void EEPROM_SavePassword (uint8_t *, uint8_t, uint8_t);
 void EEPROM_ClearPassword (uint8_t, uint8_t);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/usb.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/usb.h"
 
 
 
@@ -66,8 +66,8 @@ void SendNoKeys (void);
 void SendKey (uint8_t, uint8_t);
 uint8_t SendKeys (uint8_t *, uint8_t);
 uint8_t USB_GetLEDs (void);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
-#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
+#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
  void Init_PS2(void);
  unsigned char Reset_PS2(void);
  unsigned char GetState_PS2(void);
@@ -75,7 +75,7 @@ uint8_t USB_GetLEDs (void);
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
-#line 34 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/Password.c"
+#line 34 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/Password.c"
 void SendPassword (uint8_t stAdres){
  uint8_t i = 0,
  bufKey = 0;

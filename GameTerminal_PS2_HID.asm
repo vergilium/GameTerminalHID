@@ -358,12 +358,12 @@ L_main27:
 	BSF         PORTB+0, 7 
 ;GameTerminal_PS2_HID.c,154 :: 		sysFlags.if_pc = 1;                //Запоминаем что мы на плате
 	BSF         CVRCON+0, 0 
-;GameTerminal_PS2_HID.c,155 :: 		delay_ms(300);
-	MOVLW       19
+;GameTerminal_PS2_HID.c,155 :: 		delay_ms(3000);
+	MOVLW       183
 	MOVWF       R11, 0
-	MOVLW       68
+	MOVLW       161
 	MOVWF       R12, 0
-	MOVLW       68
+	MOVLW       195
 	MOVWF       R13, 0
 L_main28:
 	DECFSZ      R13, 1, 1
@@ -372,6 +372,7 @@ L_main28:
 	BRA         L_main28
 	DECFSZ      R11, 1, 1
 	BRA         L_main28
+	NOP
 	NOP
 ;GameTerminal_PS2_HID.c,156 :: 		}
 L_main26:
@@ -884,12 +885,12 @@ L_main78:
 	MOVLW       30
 	MOVWF       FARG_UART_Write__data+0 
 	CALL        _UART_Write+0, 0
-;GameTerminal_PS2_HID.c,261 :: 		delay_ms(300);
-	MOVLW       19
+;GameTerminal_PS2_HID.c,261 :: 		delay_ms(400);
+	MOVLW       25
 	MOVWF       R11, 0
-	MOVLW       68
+	MOVLW       90
 	MOVWF       R12, 0
-	MOVLW       68
+	MOVLW       177
 	MOVWF       R13, 0
 L_main79:
 	DECFSZ      R13, 1, 1
@@ -898,6 +899,7 @@ L_main79:
 	BRA         L_main79
 	DECFSZ      R11, 1, 1
 	BRA         L_main79
+	NOP
 	NOP
 ;GameTerminal_PS2_HID.c,262 :: 		uart_write(RDR_PRG_END);
 	MOVLW       30

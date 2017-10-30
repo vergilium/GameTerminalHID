@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 #line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
 
 
@@ -41,8 +41,8 @@ typedef unsigned int uintptr_t;
 
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
-#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/kb.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
+#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
  void Init_PS2(void);
  unsigned char Reset_PS2(void);
  unsigned char GetState_PS2(void);
@@ -50,7 +50,7 @@ typedef unsigned long int uintmax_t;
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid-master/scancodes.h"
+#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/scancodes.h"
 
 
 const code unsigned char scanCode[] = {
@@ -221,7 +221,7 @@ const code unsigned char dvFlags[] = {
 0x40,
 0x80,
 };
-#line 5 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+#line 5 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 extern uint8_t keycode[6];
 extern uint8_t modifier;
 extern uint8_t progPass[ 32 ];
@@ -300,7 +300,7 @@ uint8_t Reset_PS2(void){
  KYBState.request =  0 ;
  return 0;
 }
-#line 91 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+#line 91 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 uint8_t parity(uint8_t x){
 x ^= x >> 8;
 x ^= x >> 4;
@@ -351,7 +351,7 @@ static uint8_t keyData;
  TRISA.RA4 = 1;
  keyFlags.kb_rw = 0;
  Reset_timeuot();
-#line 148 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/kb.c"
+#line 148 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
  }
  }
 
@@ -451,6 +451,11 @@ void Set_BRDButton (uint8_t key, uint8_t upDown){
  default : break;
  }
 }
+
+
+
+
+
 
 
 

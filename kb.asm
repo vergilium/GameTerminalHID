@@ -960,15 +960,15 @@ L_end_Set_BRDButton:
 
 _SetPass:
 
-;kb.c,250 :: 		void SetPass (uint8_t key){
-;kb.c,253 :: 		for(i=0; i<PASS_BUFF_SIZE; i++){          //При нажатии кнопки массив пароля сдвигается
+;kb.c,255 :: 		void SetPass (uint8_t key){
+;kb.c,258 :: 		for(i=0; i<PASS_BUFF_SIZE; i++){          //При нажатии кнопки массив пароля сдвигается
 	CLRF        R2 
 L_SetPass86:
 	MOVLW       32
 	SUBWF       R2, 0 
 	BTFSC       STATUS+0, 0 
 	GOTO        L_SetPass87
-;kb.c,254 :: 		progPass[i] = progPass[i+1];           //на позицию вперед
+;kb.c,259 :: 		progPass[i] = progPass[i+1];           //на позицию вперед
 	MOVLW       _progPass+0
 	MOVWF       FSR1 
 	MOVLW       hi_addr(_progPass+0)
@@ -991,12 +991,12 @@ L_SetPass86:
 	MOVWF       FSR0H 
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
-;kb.c,253 :: 		for(i=0; i<PASS_BUFF_SIZE; i++){          //При нажатии кнопки массив пароля сдвигается
+;kb.c,258 :: 		for(i=0; i<PASS_BUFF_SIZE; i++){          //При нажатии кнопки массив пароля сдвигается
 	INCF        R2, 1 
-;kb.c,255 :: 		}
+;kb.c,260 :: 		}
 	GOTO        L_SetPass86
 L_SetPass87:
-;kb.c,256 :: 		if((modifier & 0x22) != 0)                     //Если нажат левый или правый shift
+;kb.c,261 :: 		if((modifier & 0x22) != 0)                     //Если нажат левый или правый shift
 	MOVLW       34
 	ANDWF       _modifier+0, 0 
 	MOVWF       R1 
@@ -1004,37 +1004,37 @@ L_SetPass87:
 	XORLW       0
 	BTFSC       STATUS+0, 2 
 	GOTO        L_SetPass89
-;kb.c,257 :: 		progPass[PASS_BUFF_SIZE-1] = key | 0x80;    //в конец дописывается код нажатой кнопки и бита shift
+;kb.c,262 :: 		progPass[PASS_BUFF_SIZE-1] = key | 0x80;    //в конец дописывается код нажатой кнопки и бита shift
 	MOVLW       128
 	IORWF       FARG_SetPass_key+0, 0 
 	MOVWF       _progPass+31 
 	GOTO        L_SetPass90
 L_SetPass89:
-;kb.c,259 :: 		progPass[PASS_BUFF_SIZE-1] = key;
+;kb.c,264 :: 		progPass[PASS_BUFF_SIZE-1] = key;
 	MOVF        FARG_SetPass_key+0, 0 
 	MOVWF       _progPass+31 
 L_SetPass90:
-;kb.c,260 :: 		}
+;kb.c,265 :: 		}
 L_end_SetPass:
 	RETURN      0
 ; end of _SetPass
 
 _KeyDecode:
 
-;kb.c,264 :: 		void KeyDecode(uint8_t sc){
-;kb.c,266 :: 		uint8_t i, key=0;                //Буферная переманная кода клавиши
+;kb.c,269 :: 		void KeyDecode(uint8_t sc){
+;kb.c,271 :: 		uint8_t i, key=0;                //Буферная переманная кода клавиши
 	CLRF        KeyDecode_key_L0+0 
-;kb.c,269 :: 		switch(sc){
+;kb.c,274 :: 		switch(sc){
 	GOTO        L_KeyDecode91
-;kb.c,270 :: 		case KEYB_FUNC_CODE        : keyFlags.if_func = 1; break;                   //Устанавливаем флаг функциональной кнопки если пришел ее код
+;kb.c,275 :: 		case KEYB_FUNC_CODE        : keyFlags.if_func = 1; break;                   //Устанавливаем флаг функциональной кнопки если пришел ее код
 L_KeyDecode93:
 	BSF         ADRESH+0, 1 
 	GOTO        L_KeyDecode92
-;kb.c,271 :: 		case KEYB_BREAK_CODE       : keyFlags.if_up = 1; break;                     //Устанавливаем флаг если кнопка отпущена
+;kb.c,276 :: 		case KEYB_BREAK_CODE       : keyFlags.if_up = 1; break;                     //Устанавливаем флаг если кнопка отпущена
 L_KeyDecode94:
 	BSF         ADRESH+0, 2 
 	GOTO        L_KeyDecode92
-;kb.c,272 :: 		case KEYB_COMPLETE_SUCCESS : KYBState.request =  KYB_FLAG_CMPSUCCES; break;//Ответ клавиатуры об удачной конфигурации
+;kb.c,277 :: 		case KEYB_COMPLETE_SUCCESS : KYBState.request =  KYB_FLAG_CMPSUCCES; break;//Ответ клавиатуры об удачной конфигурации
 L_KeyDecode95:
 	MOVLW       16
 	XORWF       _KYBState+0, 0 
@@ -1046,7 +1046,7 @@ L_KeyDecode95:
 	MOVF        R0, 0 
 	MOVWF       _KYBState+0 
 	GOTO        L_KeyDecode92
-;kb.c,273 :: 		case KEYB_RESEND           : KYBState.request =  KYB_FLAG_RESEND; break;     //Запрос клавиатуры на повторную отправку команды
+;kb.c,278 :: 		case KEYB_RESEND           : KYBState.request =  KYB_FLAG_RESEND; break;     //Запрос клавиатуры на повторную отправку команды
 L_KeyDecode96:
 	MOVLW       48
 	XORWF       _KYBState+0, 0 
@@ -1058,7 +1058,7 @@ L_KeyDecode96:
 	MOVF        R0, 0 
 	MOVWF       _KYBState+0 
 	GOTO        L_KeyDecode92
-;kb.c,274 :: 		case KEYB_FAILURE          : KYBState.request =  KYB_FLAG_FAILURE; break;//Ошибка устройства
+;kb.c,279 :: 		case KEYB_FAILURE          : KYBState.request =  KYB_FLAG_FAILURE; break;//Ошибка устройства
 L_KeyDecode97:
 	MOVLW       64
 	XORWF       _KYBState+0, 0 
@@ -1070,7 +1070,7 @@ L_KeyDecode97:
 	MOVF        R0, 0 
 	MOVWF       _KYBState+0 
 	GOTO        L_KeyDecode92
-;kb.c,275 :: 		case KEYB_ACKNOWLEDGE      : KYBState.request =  KYB_FLAG_ACKNOWLEDGE; break;//Подтверждение получения команды
+;kb.c,280 :: 		case KEYB_ACKNOWLEDGE      : KYBState.request =  KYB_FLAG_ACKNOWLEDGE; break;//Подтверждение получения команды
 L_KeyDecode98:
 	MOVLW       32
 	XORWF       _KYBState+0, 0 
@@ -1082,7 +1082,7 @@ L_KeyDecode98:
 	MOVF        R0, 0 
 	MOVWF       _KYBState+0 
 	GOTO        L_KeyDecode92
-;kb.c,276 :: 		default :  if(sc > 0 && sc < 0x84){                                //Проверка что нажата кнопка а не сервисные данные
+;kb.c,281 :: 		default :  if(sc > 0 && sc < 0x84){                                //Проверка что нажата кнопка а не сервисные данные
 L_KeyDecode99:
 	MOVF        FARG_KeyDecode_sc+0, 0 
 	SUBLW       0
@@ -1093,17 +1093,17 @@ L_KeyDecode99:
 	BTFSC       STATUS+0, 0 
 	GOTO        L_KeyDecode102
 L__KeyDecode135:
-;kb.c,277 :: 		if(keyFlags.if_func == 1){                             //Если была нажата функциональная кнопка
+;kb.c,282 :: 		if(keyFlags.if_func == 1){                             //Если была нажата функциональная кнопка
 	BTFSS       ADRESH+0, 1 
 	GOTO        L_KeyDecode103
-;kb.c,278 :: 		for(i=0; i<sizeof(funCode)/2; i++){                //Перебераем HID сканкод из массива соответствия
+;kb.c,283 :: 		for(i=0; i<sizeof(funCode)/2; i++){                //Перебераем HID сканкод из массива соответствия
 	CLRF        KeyDecode_i_L0+0 
 L_KeyDecode104:
 	MOVLW       18
 	SUBWF       KeyDecode_i_L0+0, 0 
 	BTFSC       STATUS+0, 0 
 	GOTO        L_KeyDecode105
-;kb.c,279 :: 		if(funCode[i][0] == sc){
+;kb.c,284 :: 		if(funCode[i][0] == sc){
 	MOVF        KeyDecode_i_L0+0, 0 
 	MOVWF       R0 
 	MOVLW       0
@@ -1130,7 +1130,7 @@ L_KeyDecode104:
 	XORWF       FARG_KeyDecode_sc+0, 0 
 	BTFSS       STATUS+0, 2 
 	GOTO        L_KeyDecode107
-;kb.c,280 :: 		key = funCode[i][1];                         //Если такой код имеется то записываем его в буферную переменную
+;kb.c,285 :: 		key = funCode[i][1];                         //Если такой код имеется то записываем его в буферную переменную
 	MOVF        KeyDecode_i_L0+0, 0 
 	MOVWF       R0 
 	MOVLW       0
@@ -1159,21 +1159,21 @@ L_KeyDecode104:
 	MOVWF       TBLPTRU 
 	TBLRD*+
 	MOVFF       TABLAT+0, KeyDecode_key_L0+0
-;kb.c,281 :: 		break;                                        //и выходим с цикла
+;kb.c,286 :: 		break;                                        //и выходим с цикла
 	GOTO        L_KeyDecode105
-;kb.c,282 :: 		}
+;kb.c,287 :: 		}
 L_KeyDecode107:
-;kb.c,278 :: 		for(i=0; i<sizeof(funCode)/2; i++){                //Перебераем HID сканкод из массива соответствия
+;kb.c,283 :: 		for(i=0; i<sizeof(funCode)/2; i++){                //Перебераем HID сканкод из массива соответствия
 	INCF        KeyDecode_i_L0+0, 1 
-;kb.c,283 :: 		}
+;kb.c,288 :: 		}
 	GOTO        L_KeyDecode104
 L_KeyDecode105:
-;kb.c,284 :: 		keyFlags.if_func = 0;                              //В противном случае просто сбрасываем флаг
+;kb.c,289 :: 		keyFlags.if_func = 0;                              //В противном случае просто сбрасываем флаг
 	BCF         ADRESH+0, 1 
-;kb.c,285 :: 		} else {
+;kb.c,290 :: 		} else {
 	GOTO        L_KeyDecode108
 L_KeyDecode103:
-;kb.c,286 :: 		key = scanCode[sc];                       //Если была нажата простая кнопка то записываем код из массива простых кнопок
+;kb.c,291 :: 		key = scanCode[sc];                       //Если была нажата простая кнопка то записываем код из массива простых кнопок
 	MOVLW       _scanCode+0
 	ADDWF       FARG_KeyDecode_sc+0, 0 
 	MOVWF       TBLPTRL 
@@ -1187,14 +1187,14 @@ L_KeyDecode103:
 	ADDWFC      TBLPTRU, 1 
 	TBLRD*+
 	MOVFF       TABLAT+0, KeyDecode_key_L0+0
-;kb.c,287 :: 		}
+;kb.c,292 :: 		}
 L_KeyDecode108:
-;kb.c,288 :: 		if(key>1){
+;kb.c,293 :: 		if(key>1){
 	MOVF        KeyDecode_key_L0+0, 0 
 	SUBLW       1
 	BTFSC       STATUS+0, 0 
 	GOTO        L_KeyDecode109
-;kb.c,292 :: 		if(key >= 0xE0 && key <= 0xE7){//Проверяем если прийшли данные от кнопок CtrlShiftAltWin
+;kb.c,297 :: 		if(key >= 0xE0 && key <= 0xE7){//Проверяем если прийшли данные от кнопок CtrlShiftAltWin
 	MOVLW       224
 	SUBWF       KeyDecode_key_L0+0, 0 
 	BTFSS       STATUS+0, 0 
@@ -1204,10 +1204,10 @@ L_KeyDecode108:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_KeyDecode112
 L__KeyDecode134:
-;kb.c,293 :: 		if(keyFlags.if_up == 1){                          //Проверяем если одна из кнопок была отжата
+;kb.c,298 :: 		if(keyFlags.if_up == 1){                          //Проверяем если одна из кнопок была отжата
 	BTFSS       ADRESH+0, 2 
 	GOTO        L_KeyDecode113
-;kb.c,294 :: 		modifier &= ~dvFlags[key & 0x0F];     //Если так то убираем соответствующий флаг
+;kb.c,299 :: 		modifier &= ~dvFlags[key & 0x0F];     //Если так то убираем соответствующий флаг
 	MOVLW       15
 	ANDWF       KeyDecode_key_L0+0, 0 
 	MOVWF       R0 
@@ -1227,10 +1227,10 @@ L__KeyDecode134:
 	COMF        R0, 1 
 	MOVF        R0, 0 
 	ANDWF       _modifier+0, 1 
-;kb.c,295 :: 		} else                                    //Далее проверяем если нажатая клавиша соответствует HID коду
+;kb.c,300 :: 		} else                                    //Далее проверяем если нажатая клавиша соответствует HID коду
 	GOTO        L_KeyDecode114
 L_KeyDecode113:
-;kb.c,296 :: 		modifier |= dvFlags[key & 0x0F];
+;kb.c,301 :: 		modifier |= dvFlags[key & 0x0F];
 	MOVLW       15
 	ANDWF       KeyDecode_key_L0+0, 0 
 	MOVWF       R0 
@@ -1250,22 +1250,22 @@ L_KeyDecode113:
 	MOVF        R0, 0 
 	IORWF       _modifier+0, 1 
 L_KeyDecode114:
-;kb.c,297 :: 		} /////////////////////////////////////////////////////////////
+;kb.c,302 :: 		} /////////////////////////////////////////////////////////////
 L_KeyDecode112:
-;kb.c,299 :: 		keyPos = inArray(key);          //Проверяем есть ли эта кнопка уже в массиве
+;kb.c,304 :: 		keyPos = inArray(key);          //Проверяем есть ли эта кнопка уже в массиве
 	MOVF        KeyDecode_key_L0+0, 0 
 	MOVWF       FARG_inArray_value+0 
 	CALL        _inArray+0, 0
 	MOVF        R0, 0 
 	MOVWF       KeyDecode_keyPos_L0+0 
-;kb.c,300 :: 		if(keyPos){                     //Если есть проверяем не отпущена ли кнопка
+;kb.c,305 :: 		if(keyPos){                     //Если есть проверяем не отпущена ли кнопка
 	MOVF        R0, 1 
 	BTFSC       STATUS+0, 2 
 	GOTO        L_KeyDecode115
-;kb.c,301 :: 		if(keyFlags.if_up){                             //Если отпущена
+;kb.c,306 :: 		if(keyFlags.if_up){                             //Если отпущена
 	BTFSS       ADRESH+0, 2 
 	GOTO        L_KeyDecode116
-;kb.c,302 :: 		if(sysFlags.if_pc == 1)  Set_BRDButton(key, 0);
+;kb.c,307 :: 		if(sysFlags.if_pc == 1)  Set_BRDButton(key, 0);
 	BTFSS       CVRCON+0, 0 
 	GOTO        L_KeyDecode117
 	MOVF        KeyDecode_key_L0+0, 0 
@@ -1273,7 +1273,7 @@ L_KeyDecode112:
 	CLRF        FARG_Set_BRDButton_upDown+0 
 	CALL        _Set_BRDButton+0, 0
 L_KeyDecode117:
-;kb.c,303 :: 		for(i=keyPos-1; i<5; i++){          //изьять элемент из массива и выполнить сдвих
+;kb.c,308 :: 		for(i=keyPos-1; i<5; i++){          //изьять элемент из массива и выполнить сдвих
 	DECF        KeyDecode_keyPos_L0+0, 0 
 	MOVWF       KeyDecode_i_L0+0 
 L_KeyDecode118:
@@ -1281,7 +1281,7 @@ L_KeyDecode118:
 	SUBWF       KeyDecode_i_L0+0, 0 
 	BTFSC       STATUS+0, 0 
 	GOTO        L_KeyDecode119
-;kb.c,304 :: 		keycode[i] = keycode[i+1];
+;kb.c,309 :: 		keycode[i] = keycode[i+1];
 	MOVLW       _keycode+0
 	MOVWF       FSR1 
 	MOVLW       hi_addr(_keycode+0)
@@ -1304,25 +1304,25 @@ L_KeyDecode118:
 	MOVWF       FSR0H 
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
-;kb.c,303 :: 		for(i=keyPos-1; i<5; i++){          //изьять элемент из массива и выполнить сдвих
+;kb.c,308 :: 		for(i=keyPos-1; i<5; i++){          //изьять элемент из массива и выполнить сдвих
 	INCF        KeyDecode_i_L0+0, 1 
-;kb.c,305 :: 		}
+;kb.c,310 :: 		}
 	GOTO        L_KeyDecode118
 L_KeyDecode119:
-;kb.c,306 :: 		keyCnt--;                            //Инкрементировать щетчик кнопок
+;kb.c,311 :: 		keyCnt--;                            //Инкрементировать щетчик кнопок
 	DECF        _keyCnt+0, 1 
-;kb.c,307 :: 		keyFlags.if_up = 0;                           //Сбросить флаг отпущеной кнопки
+;kb.c,312 :: 		keyFlags.if_up = 0;                           //Сбросить флаг отпущеной кнопки
 	BCF         ADRESH+0, 2 
-;kb.c,308 :: 		}
+;kb.c,313 :: 		}
 L_KeyDecode116:
-;kb.c,310 :: 		}else if(keyCnt<6){                      //Если не отпущена то добавляем и инкрементируем массив
+;kb.c,315 :: 		}else if(keyCnt<6){                      //Если не отпущена то добавляем и инкрементируем массив
 	GOTO        L_KeyDecode121
 L_KeyDecode115:
 	MOVLW       6
 	SUBWF       _keyCnt+0, 0 
 	BTFSC       STATUS+0, 0 
 	GOTO        L_KeyDecode122
-;kb.c,311 :: 		keycode[keyCnt] = key;
+;kb.c,316 :: 		keycode[keyCnt] = key;
 	MOVLW       _keycode+0
 	MOVWF       FSR1 
 	MOVLW       hi_addr(_keycode+0)
@@ -1333,9 +1333,9 @@ L_KeyDecode115:
 	INCF        FSR1H, 1 
 	MOVF        KeyDecode_key_L0+0, 0 
 	MOVWF       POSTINC1+0 
-;kb.c,312 :: 		keyCnt++;
+;kb.c,317 :: 		keyCnt++;
 	INCF        _keyCnt+0, 1 
-;kb.c,313 :: 		if(sysFlags.if_pc == 1) Set_BRDButton(key, 1);
+;kb.c,318 :: 		if(sysFlags.if_pc == 1) Set_BRDButton(key, 1);
 	BTFSS       CVRCON+0, 0 
 	GOTO        L_KeyDecode123
 	MOVF        KeyDecode_key_L0+0, 0 
@@ -1344,7 +1344,7 @@ L_KeyDecode115:
 	MOVWF       FARG_Set_BRDButton_upDown+0 
 	CALL        _Set_BRDButton+0, 0
 L_KeyDecode123:
-;kb.c,314 :: 		if(key >= KEY_A && key <= KEY_0){         //Проверка ввода только символов
+;kb.c,319 :: 		if(key >= KEY_A && key <= KEY_0){         //Проверка ввода только символов
 	MOVLW       4
 	SUBWF       KeyDecode_key_L0+0, 0 
 	BTFSS       STATUS+0, 0 
@@ -1354,18 +1354,18 @@ L_KeyDecode123:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_KeyDecode126
 L__KeyDecode133:
-;kb.c,315 :: 		SetPass(key);                          //Обработчик ввода пароля программирования и удаления ключей с клавиатуры
+;kb.c,320 :: 		SetPass(key);                          //Обработчик ввода пароля программирования и удаления ключей с клавиатуры
 	MOVF        KeyDecode_key_L0+0, 0 
 	MOVWF       FARG_SetPass_key+0 
 	CALL        _SetPass+0, 0
-;kb.c,316 :: 		}
+;kb.c,321 :: 		}
 L_KeyDecode126:
-;kb.c,317 :: 		}
+;kb.c,322 :: 		}
 L_KeyDecode122:
 L_KeyDecode121:
-;kb.c,318 :: 		}
+;kb.c,323 :: 		}
 L_KeyDecode109:
-;kb.c,319 :: 		for (i=keycnt; i<=5; i++){                  //Остальное забиваем нулями
+;kb.c,324 :: 		for (i=keycnt; i<=5; i++){                  //Остальное забиваем нулями
 	MOVF        _keyCnt+0, 0 
 	MOVWF       KeyDecode_i_L0+0 
 L_KeyDecode127:
@@ -1373,7 +1373,7 @@ L_KeyDecode127:
 	SUBLW       5
 	BTFSS       STATUS+0, 0 
 	GOTO        L_KeyDecode128
-;kb.c,320 :: 		keycode[i] = 0;
+;kb.c,325 :: 		keycode[i] = 0;
 	MOVLW       _keycode+0
 	MOVWF       FSR1 
 	MOVLW       hi_addr(_keycode+0)
@@ -1383,16 +1383,16 @@ L_KeyDecode127:
 	BTFSC       STATUS+0, 0 
 	INCF        FSR1H, 1 
 	CLRF        POSTINC1+0 
-;kb.c,319 :: 		for (i=keycnt; i<=5; i++){                  //Остальное забиваем нулями
+;kb.c,324 :: 		for (i=keycnt; i<=5; i++){                  //Остальное забиваем нулями
 	INCF        KeyDecode_i_L0+0, 1 
-;kb.c,321 :: 		}
+;kb.c,326 :: 		}
 	GOTO        L_KeyDecode127
 L_KeyDecode128:
-;kb.c,322 :: 		}  //-------------------------
+;kb.c,327 :: 		}  //-------------------------
 L_KeyDecode102:
-;kb.c,323 :: 		break;
+;kb.c,328 :: 		break;
 	GOTO        L_KeyDecode92
-;kb.c,324 :: 		}
+;kb.c,329 :: 		}
 L_KeyDecode91:
 	MOVF        FARG_KeyDecode_sc+0, 0 
 	XORLW       224
@@ -1420,7 +1420,7 @@ L_KeyDecode91:
 	GOTO        L_KeyDecode98
 	GOTO        L_KeyDecode99
 L_KeyDecode92:
-;kb.c,325 :: 		}
+;kb.c,330 :: 		}
 L_end_KeyDecode:
 	RETURN      0
 ; end of _KeyDecode

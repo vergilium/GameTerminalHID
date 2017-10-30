@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/USBdsc.c"
+#line 1 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/USBdsc.c"
 #line 1 "c:/program files (x86)/mikroc pro for pic/include/stdint.h"
 
 
@@ -41,7 +41,7 @@ typedef unsigned int uintptr_t;
 
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
-#line 3 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID-master/USBdsc.c"
+#line 3 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/USBdsc.c"
 const uint8_t _USB_HID_MANUFACTURER_STRING[] = "Vergilium_Electronics";
 const uint8_t _USB_HID_PRODUCT_STRING[] = "GameTerminalHID";
 const uint8_t _USB_HID_SERIALNUMBER_STRING[] = "0x00000001";
