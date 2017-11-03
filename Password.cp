@@ -67,7 +67,7 @@ void SendKey (uint8_t, uint8_t);
 uint8_t SendKeys (uint8_t *, uint8_t);
 uint8_t USB_GetLEDs (void);
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
-#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
+#line 151 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
  void Init_PS2(void);
  unsigned char Reset_PS2(void);
  unsigned char GetState_PS2(void);
@@ -75,6 +75,7 @@ uint8_t USB_GetLEDs (void);
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
+ unsigned char RemarkConsole(unsigned char);
 #line 34 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/Password.c"
 void SendPassword (uint8_t stAdres){
  uint8_t i = 0,

@@ -10,10 +10,13 @@ uint8_t bitcount;                              //Счетчик количества принятых бит
 uint8_t keyCnt;                                //Колличество нажатых клавишь
 uint8_t kbWriteBuff;                           //Буфер отправки команды клавиатуре
 
-struct SFLG{                                   //Структура флагов, аналогичная инициализация находится в файле kb.c
-   unsigned if_pc: 1;                          //0 = компьютер 1 = плата
-   unsigned kb_mode: 1;                        //0 = стандартная клавиатура, 1 = консоль
-} sysFlags at CVRCON;                          //Флаги сохряняются в регистре CVRCON настроек компаратора который не используется
+struct SFLG{                                  //Структура флагов, аналогичная инициализация находится в файле kb.c
+   unsigned kb_mode: 1;                       //0 = стандартная клавиатура, 1 = консоль
+   unsigned usb_on: 1;                        //1 = usb отключен, 0 = usb включен
+   unsigned kbBtn_mode: 1;                    //0 = 10 кнопок, 1 = 11 кнопок
+   unsigned wr_pass: 1;                       //1 = активация режима записи пароля
+   unsigned if_pc: 1;                         //0 = компьютер 1 = плата
+} sysFlags at CVRCON;                         //Флаги сохряняются в регистре CVRCON настроек компаратора который не используется
 
 struct KFLG{
    unsigned if_conf  : 1;                      //флаг сконфигурированой клавиатуры
@@ -209,38 +212,87 @@ uint8_t inArray(uint8_t value){               //Поиск значениея в массиве
 //==================================================================================
 void Set_BRDButton (uint8_t key, uint8_t upDown){
        switch (key){
+       //-------------------------H1----------------------------------------------
           case KEY_F5    : if(sysFlags.kb_mode == 0) break;
           case KEY_1     :
-          case KEY_NUM_1 : BT_STOP1 = upDown; LED_PIN = upDown; break;
+          case KEY_NUM_1 : BT_STOP1 = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //-------------------------H2----------------------------------------------
           case KEY_F6    : if(sysFlags.kb_mode == 0) break;
           case KEY_2     :
-          case KEY_NUM_2 : BT_STOP2 = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_2 : BT_STOP2 = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //--------------------------H3---------------------------------------------
           case KEY_F7    : if(sysFlags.kb_mode == 0) break;
           case KEY_3     :
-          case KEY_NUM_3 : BT_STOP3 = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_3 : BT_STOP3 = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //---------------------------H4--------------------------------------------
           case KEY_F8    : if(sysFlags.kb_mode == 0) break;
           case KEY_4     :
-          case KEY_NUM_4 : BT_STOP4 = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_4 : BT_STOP4 = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //----------------------------H5-------------------------------------------
           case KEY_F9    : if(sysFlags.kb_mode == 0) break;
           case KEY_5     :
-          case KEY_NUM_5 : BT_STOP5 = upDown;  LED_PIN = upDown; break;
-          case KEY_F10    : if(sysFlags.kb_mode == 0) break;
+          case KEY_NUM_5 : BT_STOP5 = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //-----------------------------Auto----------------------------------------
+          case KEY_F4    : if(sysFlags.kb_mode == 0) break;
+          case KEY_6     :
+          case KEY_NUM_6 : if(sysFlags.kbBtn_mode == ON) BT_AUTO = upDown;
+                           break;
+       //-----------------------------Line----------------------------------------
+          case KEY_F10   : if(sysFlags.kb_mode == 0) break;
           case KEY_7     :
-          case KEY_NUM_7 : BT_LINE = upDown;  LED_PIN = upDown; break;
-          case KEY_F11    : if(sysFlags.kb_mode == 0) break;
+          case KEY_NUM_7 : BT_LINE = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //------------------------------Bet----------------------------------------
+          case KEY_F11   : if(sysFlags.kb_mode == 0) break;
           case KEY_8     :
-          case KEY_NUM_8 : BT_BET = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_8 : BT_BET = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //-------------------------------Info--------------------------------------
+          case KEY_F1    : if(sysFlags.kb_mode == 0) break;
           case KEY_9     :
-          case KEY_NUM_9 : BT_INFO = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_9 : BT_INFO = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //--------------------------------Menu-------------------------------------
+          case KEY_F2    : if(sysFlags.kb_mode == 0) break;
           case KEY_0     :
-          case KEY_NUM_0 : BT_MENU = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_0 : BT_MENU = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //---------------------------------Start-----------------------------------
           case KEY_F12   : if(sysFlags.kb_mode == 0) break;
           case KEY_ENTER :
           case KEY_SPACE :
-          case KEY_NUM_ENTR: BT_START = upDown;  LED_PIN = upDown; break;
+          case KEY_NUM_ENTR: BT_START = upDown;
+                           if (sysFlags.kbBtn_mode == OFF)
+                              LED_PIN = upDown;
+                           break;
+       //---------------------------------to PC-----------------------------------
           case KEY_F3    : if(sysFlags.kb_mode == 0) break;
           case KEY_ESC   :
           case KEY_HOME  : sysFlags.if_pc = 0; break;           //Кнопками Esc и Home происходит выход с режима плата
+       //-------------------------------------------------------------------------
           default : break;
        }
 }
@@ -258,14 +310,27 @@ void SetPass (uint8_t key){
   for(i=0; i<PASS_BUFF_SIZE; i++){          //При нажатии кнопки массив пароля сдвигается
      progPass[i] = progPass[i+1];           //на позицию вперед
   }
-  if((modifier & 0x22) != 0)                     //Если нажат левый или правый shift
+  if((modifier & 0x22) != 0)                      //Если нажат левый или правый shift
       progPass[PASS_BUFF_SIZE-1] = key | 0x80;    //в конец дописывается код нажатой кнопки и бита shift
   else
-      progPass[PASS_BUFF_SIZE-1] = key;
+      progPass[PASS_BUFF_SIZE-1] = key;           //иначе флаг не записывается
 }
-//==================================================================================
-//=============Функия обработки данных от клавиатуры================================
-//==================================================================================
+//==============================================================================
+//    Функция преобразует коды консоли в коды соответствия для онлайн
+//    Возврат:        unsigned char - переназначеный код
+//    Параметры:      unsigned char key - исходный код клавиши
+//    Описание:       Коды соответствия занесены в массив kbRemark в файле
+//                    Scancodes.h
+//==============================================================================
+unsigned char RemarkConsole(unsigned char key){
+    key = kbRemark[key - 0x3A];
+    return key;
+}
+//==============================================================================
+//    Функия обработки данных от клавиатуры
+//    Возврат:        void
+//    Параметры:      uint8_t sc - код клавиши возвращенный с прерывания
+//==============================================================================
 void KeyDecode(uint8_t sc){
 static uint8_t keyPos;           //Позиция уже нажатой кнопки в массиве keycode
 uint8_t i, key=0;                //Буферная переманная кода клавиши
@@ -301,7 +366,7 @@ uint8_t i, key=0;                //Буферная переманная кода клавиши
                      modifier |= dvFlags[key & 0x0F];
                   } /////////////////////////////////////////////////////////////
                   ////////Далее идет обычная обработка кнопок////////////////////
-                  keyPos = inArray(key);          //Проверяем есть ли эта кнопка уже в массиве
+                  keyPos = inArray(key);             //Проверяем есть ли эта кнопка уже в массиве (режим клавиатуры)
                   if(keyPos){                     //Если есть проверяем не отпущена ли кнопка
                     if(keyFlags.if_up){                             //Если отпущена
                        if(sysFlags.if_pc == 1)  Set_BRDButton(key, 0);
@@ -312,10 +377,10 @@ uint8_t i, key=0;                //Буферная переманная кода клавиши
                        keyFlags.if_up = 0;                           //Сбросить флаг отпущеной кнопки
                     }
                   //--------------------------------------------------------------------------
-                  }else if(keyCnt<6){                      //Если не отпущена то добавляем и инкрементируем массив
-                    keycode[keyCnt] = key;
-                    keyCnt++;
+                  }else if(keyCnt<6){                      //Если не отпущена то проверяем какой режим клавиатуры или консоли
                     if(sysFlags.if_pc == 1) Set_BRDButton(key, 1);
+                    keycode[keyCnt] = key;
+                    keyCnt++;                                     //инкрементируем массив кнопок
                     if(key >= KEY_A && key <= KEY_0){         //Проверка ввода только символов
                        SetPass(key);                          //Обработчик ввода пароля программирования и удаления ключей с клавиатуры
                     }
