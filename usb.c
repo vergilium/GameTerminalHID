@@ -1,18 +1,9 @@
 #include <stdint.h>
 #include "usb.h"
-#include "kb.h"
 
 uint8_t readbuff[64] absolute 0x500;          //Буфер приема данных от USB
 uint8_t writebuff[64] absolute 0x540;         //буфер передачи данных USB
 uint8_t reserved=0;                           //Зарезервированая переменная для будущего использования
-
-struct SFLG{                                  //Структура флагов, аналогичная инициализация находится в файле kb.c
-   unsigned kb_mode: 1;                       //0 = стандартная клавиатура, 1 = консоль
-   unsigned usb_on: 1;                        //1 = usb отключен, 0 = usb включен
-   unsigned kbBtn_mode: 1;                    //0 = 10 кнопок, 1 = 11 кнопок
-   unsigned wr_pass: 1;                       //1 = активация режима записи пароля
-   unsigned if_pc: 1;                         //0 = компьютер 1 = плата
-} sysFlags at CVRCON;                         //Флаги сохряняются в регистре CVRCON настроек компаратора который не используется
 
 //==============================================================================
 //    Функция определения конфигурации USB и иницыализация флагов
@@ -51,18 +42,13 @@ void USB_ReceiveBuffSet (void){
 //    Параметры:      void
 //==============================================================================
 uint8_t SendKeys (uint8_t *keys, uint8_t modifier){
-   uint8_t i,
+   uint8_t i = 0,
            cnt = 0;
-      memset(writebuff, 0, 8);
       writebuff[0] = modifier;
       writebuff[1] = reserved;
       for(i=0; i<=5; i++){
          if(keys[i] != 0) cnt++;
-         if(sysFlags.kb_mode == 1){                                //Если консоль то
-            if(keys[i] >= KEY_F1 && keys[i] <= KEY_F12)            //Проверяем что клавиша в диапазоне консоли
-                writebuff[i+2] = RemarkConsole(keys[i]);           //делаем переназначения
-         } else
-            writebuff[i+2]=keys[i];
+         writebuff[i+2]=keys[i];
       }
       USBDev_HIDWrite(1,writebuff,8);
    return cnt;

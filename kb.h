@@ -43,10 +43,6 @@
     #define BT_START          PORTB.RB4   //enter
     #define BT_INFO           PORTC.RC0   //9
     #define BT_MENU           PORTC.RC1   //0
-    #define BT_AUTO           PORTC.RC2   //6
-    
-    #define ON                1
-    #define OFF               0
     
     #define LED_PIN           PORTC.RC2
     #define VIDEO_PIN         PORTB.RB7
@@ -155,6 +151,5 @@
     void PS2_interrupt(void);
     void PS2_Timeout_Interrupt(void);
     unsigned char PS2_Send(unsigned char);
-    unsigned char RemarkConsole(unsigned char);
     
 #endif // KB_H

@@ -42,7 +42,7 @@ typedef unsigned int uintptr_t;
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
-#line 151 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
+#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
  void Init_PS2(void);
  unsigned char Reset_PS2(void);
  unsigned char GetState_PS2(void);
@@ -50,12 +50,7 @@ typedef unsigned long int uintmax_t;
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
- unsigned char RemarkConsole(unsigned char);
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/scancodes.h"
-
-
-
-
 
 
 const code unsigned char scanCode[] = {
@@ -194,9 +189,6 @@ const code unsigned char scanCode[] = {
 0x40
 };
 
-
-
-
 const code unsigned char funCode[][2] = {
 
 {0x5A, 0x58},
@@ -229,24 +221,6 @@ const code unsigned char dvFlags[] = {
 0x40,
 0x80,
 };
-
-
-
-
-const code unsigned char kbRemark[] = {
- 0x0B ,
- 0x0A ,
- 0x13 ,
- 0x09 ,
- 0x1E ,
- 0x1F ,
- 0x20 ,
- 0x21 ,
- 0x22 ,
- 0x10 ,
- 0x05 ,
- 0x2C 
-};
 #line 5 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 extern uint8_t keycode[6];
 extern uint8_t modifier;
@@ -257,11 +231,8 @@ uint8_t keyCnt;
 uint8_t kbWriteBuff;
 
 struct SFLG{
- unsigned kb_mode: 1;
- unsigned usb_on: 1;
- unsigned kbBtn_mode: 1;
- unsigned wr_pass: 1;
  unsigned if_pc: 1;
+ unsigned kb_mode: 1;
 } sysFlags at CVRCON;
 
 struct KFLG{
@@ -329,7 +300,7 @@ uint8_t Reset_PS2(void){
  KYBState.request =  0 ;
  return 0;
 }
-#line 94 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
+#line 91 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
 uint8_t parity(uint8_t x){
 x ^= x >> 8;
 x ^= x >> 4;
@@ -380,7 +351,7 @@ static uint8_t keyData;
  TRISA.RA4 = 1;
  keyFlags.kb_rw = 0;
  Reset_timeuot();
-#line 151 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
+#line 148 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/kb.c"
  }
  }
 
@@ -445,87 +416,38 @@ uint8_t inArray(uint8_t value){
 
 void Set_BRDButton (uint8_t key, uint8_t upDown){
  switch (key){
-
  case  0x3E  : if(sysFlags.kb_mode == 0) break;
  case  0x1E  :
- case  0x59  :  PORTA.RA0  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x59  :  PORTA.RA0  = upDown;  PORTC.RC2  = upDown; break;
  case  0x3F  : if(sysFlags.kb_mode == 0) break;
  case  0x1F  :
- case  0x5A  :  PORTA.RA1  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x5A  :  PORTA.RA1  = upDown;  PORTC.RC2  = upDown; break;
  case  0x40  : if(sysFlags.kb_mode == 0) break;
  case  0x20  :
- case  0x5B  :  PORTA.RA2  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x5B  :  PORTA.RA2  = upDown;  PORTC.RC2  = upDown; break;
  case  0x41  : if(sysFlags.kb_mode == 0) break;
  case  0x21  :
- case  0x5C  :  PORTA.RA3  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x5C  :  PORTA.RA3  = upDown;  PORTC.RC2  = upDown; break;
  case  0x42  : if(sysFlags.kb_mode == 0) break;
  case  0x22  :
- case  0x5D  :  PORTA.RA5  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
- case  0x3D  : if(sysFlags.kb_mode == 0) break;
- case  0x23  :
- case  0x5E  : if(sysFlags.kbBtn_mode ==  1 )  PORTC.RC2  = upDown;
- break;
-
+ case  0x5D  :  PORTA.RA5  = upDown;  PORTC.RC2  = upDown; break;
  case  0x43  : if(sysFlags.kb_mode == 0) break;
  case  0x24  :
- case  0x5F  :  PORTB.RB6  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x5F  :  PORTB.RB6  = upDown;  PORTC.RC2  = upDown; break;
  case  0x44  : if(sysFlags.kb_mode == 0) break;
  case  0x25  :
- case  0x60  :  PORTB.RB5  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
- case  0x3A  : if(sysFlags.kb_mode == 0) break;
+ case  0x60  :  PORTB.RB5  = upDown;  PORTC.RC2  = upDown; break;
  case  0x26  :
- case  0x61  :  PORTC.RC0  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
- case  0x3B  : if(sysFlags.kb_mode == 0) break;
+ case  0x61  :  PORTC.RC0  = upDown;  PORTC.RC2  = upDown; break;
  case  0x27  :
- case  0x62  :  PORTC.RC1  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x62  :  PORTC.RC1  = upDown;  PORTC.RC2  = upDown; break;
  case  0x45  : if(sysFlags.kb_mode == 0) break;
  case  0x28  :
  case  0x2C  :
- case  0x58 :  PORTB.RB4  = upDown;
- if (sysFlags.kbBtn_mode ==  0 )
-  PORTC.RC2  = upDown;
- break;
-
+ case  0x58 :  PORTB.RB4  = upDown;  PORTC.RC2  = upDown; break;
  case  0x3C  : if(sysFlags.kb_mode == 0) break;
  case  0x29  :
  case  0x4A  : sysFlags.if_pc = 0; break;
-
  default : break;
  }
 }
@@ -547,11 +469,6 @@ void SetPass (uint8_t key){
  progPass[ 32 -1] = key | 0x80;
  else
  progPass[ 32 -1] = key;
-}
-
-unsigned char RemarkConsole(unsigned char key){
- key = kbRemark[key - 0x3A];
- return key;
 }
 
 
@@ -603,9 +520,9 @@ uint8_t i, key=0;
  }
 
  }else if(keyCnt<6){
- if(sysFlags.if_pc == 1) Set_BRDButton(key, 1);
  keycode[keyCnt] = key;
  keyCnt++;
+ if(sysFlags.if_pc == 1) Set_BRDButton(key, 1);
  if(key >=  0x04  && key <=  0x27 ){
  SetPass(key);
  }

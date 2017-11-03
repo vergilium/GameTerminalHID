@@ -10,21 +10,20 @@ diagnostics: 231	123	Compiled Successfully	__Lib_MemManager.c
 diagnostics: 0	122	Compilation Started	stdint.h
 diagnostics: 209	123	Compiled Successfully	HIDDevice_PIC18F.c
 diagnostics: 0	122	Compilation Started	stdint.h
-hint: 100	1163	Variable 'i' has been declared, but not used	GameTerminal_PS2_HID.c
-diagnostics: 318	123	Compiled Successfully	GameTerminal_PS2_HID.c
+diagnostics: 288	123	Compiled Successfully	GameTerminal_PS2_HID.c
 diagnostics: 0	122	Compilation Started	stdint.h
-diagnostics: 387	123	Compiled Successfully	kb.c
+diagnostics: 330	123	Compiled Successfully	kb.c
 diagnostics: 0	122	Compilation Started	stdint.h
 diagnostics: 143	123	Compiled Successfully	USBdsc.c
 diagnostics: 0	122	Compilation Started	stdint.h
 diagnostics: 88	123	Compiled Successfully	Password.c
 diagnostics: 0	122	Compilation Started	stdint.h
-diagnostics: 103	123	Compiled Successfully	usb.c
-diagnostics: 0	127	All files Compiled in 327 ms	 
+diagnostics: 89	123	Compiled Successfully	usb.c
+diagnostics: 0	127	All files Compiled in 328 ms	 
 hint: 0	1144	Used RAM (bytes): 893 (44%)  Free RAM (bytes): 1134 (56%)	Used RAM (bytes): 893 (44%)  Free RAM (bytes): 1134 (56%)
-hint: 0	1144	Used ROM (bytes): 13164 (40%)  Free ROM (bytes): 19604 (60%)	Used ROM (bytes): 13164 (40%)  Free ROM (bytes): 19604 (60%)
+hint: 0	1144	Used ROM (bytes): 12360 (38%)  Free ROM (bytes): 20408 (62%)	Used ROM (bytes): 12360 (38%)  Free ROM (bytes): 20408 (62%)
 diagnostics: 0	125	Project Linked Successfully	GameTerminal_PS2_HID.mcppi
 hint: 0	1004	COFF file successfully generated	COFF file successfully generated
-diagnostics: 0	128	Linked in 1467 ms	 
-diagnostics: 0	129	Project 'GameTerminal_PS2_HID.mcppi' completed: 2075 ms	 
-diagnostics: 0	103	Finished successfully: 02 ноя 2017, 14:57:39	GameTerminal_PS2_HID.mcppi
+diagnostics: 0	128	Linked in 1607 ms	 
+diagnostics: 0	129	Project 'GameTerminal_PS2_HID.mcppi' completed: 2231 ms	 
+diagnostics: 0	103	Finished successfully: 30 окт 2017, 16:40:57	GameTerminal_PS2_HID.mcppi

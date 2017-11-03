@@ -22,18 +22,14 @@ uint8_t modifier=0b00000000;                  //Модификатор для передачи функцио
 uint8_t progPass[PASS_BUFF_SIZE] = {0};       //Переменная хранения ввода пароля программирования или удаления ключей
 char passCnt = 0;                             //переменная количества введенных символов пароля (точнее кол. оставшихся пустых ячеек)
 uint8_t kybCnt = KYBCNT_DELAY;                //Переменная отсчета времени переключения режима клавиатуры
-uint8_t sysConfig;
 struct SFLG{                                  //Структура флагов, аналогичная инициализация находится в файле kb.c
-   unsigned kb_mode: 1;                       //0 = стандартная клавиатура, 1 = консоль
-   unsigned usb_on: 1;                        //1 = usb отключен, 0 = usb включен
-   unsigned kbBtn_mode: 1;                    //0 = 10 кнопок, 1 = 11 кнопок
-   unsigned wr_pass: 1;                       //1 = активация режима записи пароля
    unsigned if_pc: 1;                         //0 = компьютер 1 = плата
+   unsigned kb_mode: 1;                       //0 = стандартная клавиатура, 1 = консоль
+   unsigned wr_pass: 1;                       //1 = активация режима записи пароля
 } sysFlags at CVRCON;                         //Флаги сохряняются в регистре CVRCON настроек компаратора который не используется
 
 void interrupt(){
-     if(sysFlags.usb_on == 0)
-        USBDev_IntHandler();      // USB servicing is done inside the interrupt
+     USBDev_IntHandler();         // USB servicing is done inside the interrupt
      PS2_interrupt();             //Прерывание по INT1 при поступлении данных с PS2
      PS2_Timeout_Interrupt();     //Прерывание по timer0 через 1мс в случае ошибочных данных по PS2
 }
@@ -97,7 +93,6 @@ uint8_t ArrCmp(uint8_t *arr1, const uint8_t *arr2, uint8_t pos, uint8_t ln){
 //    Тело основной программы
 //==============================================================================
 void main(){
-   uint8_t i;
         INTCON = 0;     //Запрещаются все прерывания
         /////////////////////Настройка портов///////////////////////////////////
         ADCON1 = 0x0F;  //Сконфигурировать все порты нак цифровые
@@ -114,50 +109,52 @@ void main(){
         ADRESL = 0;                            //переназначеных
         Init_PS2();                            //Инициализация клавиатуры PS2
         UART1_Init(9600);                      //инициализация UART на 9600 bps
-        /////Считывание конфигурации с EEPROM//////////////////////////
-        sysConfig = EEPROM_Read(SYS_CONF_ADDR);                   //Чтение байта конфигурации
-        if(sysConfig == 0xFF) EEPROM_Write(SYS_CONF_ADDR,0);      //Если ячейка не инициализирована то прошить режим по умолчанию
-        sysFlags.kb_mode = sysConfig & 0x01;                      //Заносим биты в структуру конфигурации
-        sysFlags.usb_on = (sysConfig & 0x02)>>1;
-        sysFlags.kbBtn_mode = (sysConfig & 0x04)>>2;
-        ///////////////////////////////////////////////////////////////
+        switch(EEPROM_Read(0)){                //Чтение байта конфигурации режима клавиатуры
+           case 0xFF : EEPROM_Write(0,0);      //Если ячейка не инициализирована то прошить режим Клавиатура
+                       sysFlags.kb_mode = 0;   //и присвоить этот режим
+                       break;
+           case 0x01 : sysFlags.kb_mode = 1;   //Если присвоен режим консоли
+                       break;
+           case 0x00 : sysFlags.kb_mode = 0;   //Если присвоен режим клавиатуры
+                       break;
+           default : break;
+        }
         PWR12 = 1;                             //Включение питания 12В на плату
         ///////////////////////////////////////////////////////////////
         ////////Инициализация USB HID//////////////////////////////////
-        if(sysFlags.usb_on == 0){                                 //Если USB включен то инициализируем
-           USBDev_Init();
-           USBFlags.hid_rec = 0;
-        }
+        //USBDev_HIDInit();
+        USBDev_Init();
         IPEN_bit = 1;
         USBIP_bit = 1;
         USBIE_bit = 1;
         GIEH_bit = 1;
+        USBFlags.hid_rec = 0;
         ///////////////////////////////////////////////////////////////
         GIE_bit = 1;
         PEIE_bit = 1;
         delay_ms(100);
-        Reset_PS2();                           //Сброс клавиатуры
+        Reset_PS2();
         Led_Indicate(2);                       //Индикация готовности
         //Основной цикл
   while(1) {
-       asm clrwdt;                       //Сброс сторожевого таймера
-       if(sysFlags.usb_on == ON)         //Если USB включен
-          USB_StateInit();               //Определение состояние USB
+       asm clrwdt;                    //Сброс сторожевого таймера
+       USB_StateInit();               //Определение состояние USB
        ////////////////////////////////////////////////////////////////
        //////Переключение с ПК на плату и включение платы//////////////
        if(button(&PORTC, RC7, 200, 0)){          //Если включение сработало
-           if(sysFlags.kbBtn_mode == KBBTN_10) LED_PIN = 1;  //Зажигаем светодиод в случае если не используется 11й вывод на кнопки
+           LED_PIN = 1;
            if(keycode[0] == KEY_L_CTRL){         //Если зажат левый CTRL и при этом сработал ключ
               SendPassword(PASS_START_ADDR);     //Запускается функция введения сохраненного пароля
-              delay_ms(9000);                    //Тупим чтобы небыло много срабатываний и случайного перехода на плату
+              delay_ms(10000);                   //задержка для защиты от повторного срабатывания, в течении
+                                                 //которой должны закрыть ключь, иначе сработает переход на плату
            } else {                              //Если левый CTRL не нажат то выполняется переход на плату
-              Reset_PS2();                       //Сброс клавиатуры
+              if(Reset_PS2() == 0){ LED_PIN = 0; }
               PWR5 = 1;                          //Включить 5В питание платы
               VIDEO_PIN = 1;                     //Переключить монитор на плату
               sysFlags.if_pc = 1;                //Запоминаем что мы на плате
+              delay_ms(3000);
            }
-           delay_ms(1000);
-           LED_PIN = 0;                          //Гасим светодиод
+           LED_PIN = 0;
         }
         /////////////////////////////////////////////////////////////////////////////////
         ///Получение OUT репортов от хоста (Управление светодиодами клавиатуры)//////////
@@ -181,20 +178,16 @@ void main(){
                             break;
            case KEY_F5 : if(sysFlags.kb_mode == 0){                        //Обработка переключения на консоль
                           if(--kybCnt == 0){
-                             sysConfig |= 1;
-                             EEPROM_Write(SYS_CONF_ADDR,sysConfig);
+                             EEPROM_Write(0,1);
                              sysFlags.kb_mode = 1;
-                       //      memset(keycode, 0, 6);                        //Очищаем буфер кнопок чтобы исключить ошибки в переназначениях
                              kybCnt = KYBCNT_DELAY;
                              uart_write(RDR_PRG_END);
                            }
                          } break;
            case KEY_NUM_ENTR : if(sysFlags.kb_mode == 1){                  //Обработка переключения на клавиатуру
                                  if(--kybCnt == 0){
-                                    sysConfig &= ~1;
-                                    EEPROM_Write(SYS_CONF_ADDR,sysConfig);
+                                    EEPROM_Write(0,0);
                                     sysFlags.kb_mode = 0;
-                        //            memset(keycode, 0, 6);                 //Очищаем буфер кнопок чтобы исключить ошибки в переназначениях
                                     kybCnt = KYBCNT_DELAY;
                                     uart_write(RDR_PRG_END);
                                  }
@@ -214,23 +207,12 @@ void main(){
                           USBEN_bit = 0;                     //Выключение HID устройства
                           delay_ms(10);                      //Задержка для ПК, чтобы успел отключить
                           asm RESET; break;                  //Сброс МК
-              case KEY_P: uart_write(RDR_PRG_END);           //Вход в режим программирования пароля, пикаем разок
+              case KEY_G: uart_write(RDR_PRG_END);           //Вход в режим программирования пароля, пикаем разок
                           sysFlags.wr_pass = 1;              //устанавливаем соответствующий флаг
                           memset(progPass, 0, PASS_BUFF_SIZE);//очищаем массив ввода пароля
                           PS2_Send(SET_KEYB_INDICATORS);     //Зажигаем на клавиатуре светодиод SCR LOCK
                           delay_ms(10);
                           PS2_Send(SET_SCRL_LED);
-                          break;
-              case KEY_U: uart_write(RDR_PRG_END);            //Активация интерфейса USB, пикаем
-                          sysConfig &= ~(1<<1);               //Заносим бит конфигурации в переменную
-                          EEPROM_write(SYS_CONF_ADDR,sysConfig);//Пишем новую конфигурацию в EEPROM
-                          delay_ms(10);
-                          asm RESET;                           //Перезагружаем контроллер
-                          break;
-              case KEY_E: sysConfig |= (1<<2);                 //Активация 11й кнопки, занесение в переменную конфигурации
-                          EEPROM_write(SYS_CONF_ADDR, sysConfig);//Запись новой конф. в EEPROM
-                          sysFlags.kbBtn_mode = 1;             //Устанавливаем соотв. флаг
-                          uart_write(RDR_PRG_END);             //Пикаем по завершению
                           break;
               default: break;
            }
@@ -246,20 +228,8 @@ void main(){
               case KEY_3: UART1_Write(RDR_CLR_CH3); break;   //Удаление3 - овнер
               case KEY_4: UART1_Write(RDR_CLR_CH4); break;   //Удаление4 - админ
               case KEY_5: UART1_Write(RDR_CLR_ALL); break;   //Удаление5 - всех ключей
-              case KEY_P: EEPROM_ClearPassword(PASS_START_ADDR, PASS_BUFF_SIZE); //Удаление пароля ввода
+              case KEY_G: EEPROM_ClearPassword(PASS_START_ADDR, PASS_BUFF_SIZE); //Удаление пароля ввода
                           uart_write(RDR_PRG_END);            //Пикаем по завершении
-                          break;
-              case KEY_U: uart_write(RDR_PRG_END);            //Деактивация USB интерфейса
-                          sysConfig |= (1<<1);                //Подготавливаем новый конфиг
-                          EEPROM_write(SYS_CONF_ADDR, sysConfig);//и пишем в EEPROM
-                          USBEN_bit = 0;                     //Выключение HID устройства
-                          delay_ms(10);
-                          asm RESET;                         //Перезапускаем контроллер
-                          break;
-              case KEY_E: sysConfig &= ~(1<<2);              //Деактивация 11й кнопки, подг. конфиг
-                          EEPROM_write(SYS_CONF_ADDR, sysConfig);//Пишем в EEPROM
-                          sysFlags.kbBtn_mode = 0;           //Сбрасываем соответствующий флаг
-                          uart_write(RDR_PRG_END);           //Пикаем по завершении
                           break;
               default: break;
            }

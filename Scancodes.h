@@ -1,9 +1,5 @@
-#ifndef SCANCODES_H
-#define SCANCODES_H
+// Соответствия символов ps2 HID
 
-////////////////////////////////////////////////////////////////////
-//         Соответствия символов ps2 HID
-////////////////////////////////////////////////////////////////////
 const code unsigned char scanCode[] = {     //Таблица обычных кнопок
 //HID          func           PS2
 0x01,          //Err          00
@@ -140,9 +136,6 @@ const code unsigned char scanCode[] = {     //Таблица обычных кнопок
 0x40           //F7           83
 };
 
-////////////////////////////////////////////////////////////////////
-//         Соответствия функциональных клавишь ps2 HID
-////////////////////////////////////////////////////////////////////
 const code unsigned char funCode[][2] = {      //Таблица функциональных кнопок
 //AT   HID
 {0x5A, 0x58},     //Num Enter
@@ -175,23 +168,3 @@ const code unsigned char dvFlags[] = {          //Флаги модификатора
 0x40,                                      //DV_RIGHT_ALT
 0x80,                                      //DV_RIGHT_GUI
 };
-
-////////////////////////////////////////////////////////////////////
-//         Соответствия кнопок консоли для ПК
-////////////////////////////////////////////////////////////////////
-const code unsigned char kbRemark[] = {
-KEY_H,                 //Info/help                KEY_F1
-KEY_G,                 //Menu                     KEY_F2
-KEY_P,                 //Collect/escape to PC     KEY_F3
-KEY_F,                 //AutoPlay                 KEY_F4
-KEY_1,                 //H1                       KEY_F5
-KEY_2,                 //H2                       KEY_F6
-KEY_3,                 //H3                       KEY_F7
-KEY_4,                 //H4                       KEY_F8
-KEY_5,                 //H5                       KEY_F9
-KEY_M,                 //MaxBet                   KEY_F10
-KEY_B,                 //Bet                      KEY_F11
-KEY_SPACE              //Start                    KEY_F12
-};
-
-#endif // SCANCODES_H

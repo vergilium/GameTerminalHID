@@ -42,7 +42,7 @@ typedef unsigned int uintptr_t;
 typedef signed long int intmax_t;
 typedef unsigned long int uintmax_t;
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/main.h"
-#line 27 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/main.h"
+#line 19 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/main.h"
  const code unsigned char progStr[] = {
  0x0A,
  0x0B,
@@ -89,7 +89,7 @@ void SendKey (uint8_t, uint8_t);
 uint8_t SendKeys (uint8_t *, uint8_t);
 uint8_t USB_GetLEDs (void);
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
-#line 151 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
+#line 147 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
  void Init_PS2(void);
  unsigned char Reset_PS2(void);
  unsigned char GetState_PS2(void);
@@ -97,7 +97,6 @@ uint8_t USB_GetLEDs (void);
  void PS2_interrupt(void);
  void PS2_Timeout_Interrupt(void);
  unsigned char PS2_Send(unsigned char);
- unsigned char RemarkConsole(unsigned char);
 #line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/password.h"
 
 
@@ -113,22 +112,18 @@ uint8_t modifier=0b00000000;
 uint8_t progPass[ 32 ] = {0};
 char passCnt = 0;
 uint8_t kybCnt =  50 ;
-uint8_t sysConfig;
 struct SFLG{
- unsigned kb_mode: 1;
- unsigned usb_on: 1;
- unsigned kbBtn_mode: 1;
- unsigned wr_pass: 1;
  unsigned if_pc: 1;
+ unsigned kb_mode: 1;
+ unsigned wr_pass: 1;
 } sysFlags at CVRCON;
 
 void interrupt(){
- if(sysFlags.usb_on == 0)
  USBDev_IntHandler();
  PS2_interrupt();
  PS2_Timeout_Interrupt();
 }
-#line 44 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
+#line 40 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/GameTerminal_PS2_HID.c"
 void USBDev_EventHandler(uint8_t event) {
  switch(event){
  case _USB_DEV_EVENT_CONFIGURED : USBFlags.if_conf = 1; break;
@@ -185,7 +180,6 @@ uint8_t ArrCmp(uint8_t *arr1, const uint8_t *arr2, uint8_t pos, uint8_t ln){
 
 
 void main(){
- uint8_t i;
  INTCON = 0;
 
  ADCON1 = 0x0F;
@@ -202,24 +196,26 @@ void main(){
  ADRESL = 0;
  Init_PS2();
  UART1_Init(9600);
-
- sysConfig = EEPROM_Read( 0 );
- if(sysConfig == 0xFF) EEPROM_Write( 0 ,0);
- sysFlags.kb_mode = sysConfig & 0x01;
- sysFlags.usb_on = (sysConfig & 0x02)>>1;
- sysFlags.kbBtn_mode = (sysConfig & 0x04)>>2;
-
+ switch(EEPROM_Read(0)){
+ case 0xFF : EEPROM_Write(0,0);
+ sysFlags.kb_mode = 0;
+ break;
+ case 0x01 : sysFlags.kb_mode = 1;
+ break;
+ case 0x00 : sysFlags.kb_mode = 0;
+ break;
+ default : break;
+ }
   PORTB.RB3  = 1;
 
 
- if(sysFlags.usb_on == 0){
+
  USBDev_Init();
- USBFlags.hid_rec = 0;
- }
  IPEN_bit = 1;
  USBIP_bit = 1;
  USBIE_bit = 1;
  GIEH_bit = 1;
+ USBFlags.hid_rec = 0;
 
  GIE_bit = 1;
  PEIE_bit = 1;
@@ -229,22 +225,22 @@ void main(){
 
  while(1) {
  asm clrwdt;
- if(sysFlags.usb_on ==  1 )
  USB_StateInit();
 
 
  if(button(&PORTC, RC7, 200, 0)){
- if(sysFlags.kbBtn_mode ==  0 )  PORTC.RC2  = 1;
+  PORTC.RC2  = 1;
  if(keycode[0] ==  0xE0 ){
  SendPassword( 0x01 );
- delay_ms(9000);
+ delay_ms(10000);
+
  } else {
- Reset_PS2();
+ if(Reset_PS2() == 0){  PORTC.RC2  = 0; }
   PORTB.RB2  = 1;
   PORTB.RB7  = 1;
  sysFlags.if_pc = 1;
+ delay_ms(3000);
  }
- delay_ms(1000);
   PORTC.RC2  = 0;
  }
 
@@ -269,20 +265,16 @@ void main(){
  break;
  case  0x3E  : if(sysFlags.kb_mode == 0){
  if(--kybCnt == 0){
- sysConfig |= 1;
- EEPROM_Write( 0 ,sysConfig);
+ EEPROM_Write(0,1);
  sysFlags.kb_mode = 1;
-
  kybCnt =  50 ;
  uart_write( 30 );
  }
  } break;
  case  0x58  : if(sysFlags.kb_mode == 1){
  if(--kybCnt == 0){
- sysConfig &= ~1;
- EEPROM_Write( 0 ,sysConfig);
+ EEPROM_Write(0,0);
  sysFlags.kb_mode = 0;
-
  kybCnt =  50 ;
  uart_write( 30 );
  }
@@ -302,23 +294,12 @@ void main(){
  USBEN_bit = 0;
  delay_ms(10);
  asm RESET; break;
- case  0x13 : uart_write( 30 );
+ case  0x0A : uart_write( 30 );
  sysFlags.wr_pass = 1;
  memset(progPass, 0,  32 );
  PS2_Send( 0xED );
  delay_ms(10);
  PS2_Send( 0x01 );
- break;
- case  0x18 : uart_write( 30 );
- sysConfig &= ~(1<<1);
- EEPROM_write( 0 ,sysConfig);
- delay_ms(10);
- asm RESET;
- break;
- case  0x08 : sysConfig |= (1<<2);
- EEPROM_write( 0 , sysConfig);
- sysFlags.kbBtn_mode = 1;
- uart_write( 30 );
  break;
  default: break;
  }
@@ -334,19 +315,7 @@ void main(){
  case  0x20 : UART1_Write( 207 ); break;
  case  0x21 : UART1_Write( 208 ); break;
  case  0x22 : UART1_Write( 209 ); break;
- case  0x13 : EEPROM_ClearPassword( 0x01 ,  32 );
- uart_write( 30 );
- break;
- case  0x18 : uart_write( 30 );
- sysConfig |= (1<<1);
- EEPROM_write( 0 , sysConfig);
- USBEN_bit = 0;
- delay_ms(10);
- asm RESET;
- break;
- case  0x08 : sysConfig &= ~(1<<2);
- EEPROM_write( 0 , sysConfig);
- sysFlags.kbBtn_mode = 0;
+ case  0x0A : EEPROM_ClearPassword( 0x01 ,  32 );
  uart_write( 30 );
  break;
  default: break;
@@ -376,7 +345,7 @@ void main(){
  delay_ms(10);
  PS2_Send( 0x00 );
  uart_write( 30 );
- delay_ms(600);
+ delay_ms(400);
  uart_write( 30 );
  }
  sysFlags.wr_pass = 0;

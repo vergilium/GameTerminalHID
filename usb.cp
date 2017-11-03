@@ -57,28 +57,10 @@ void SendNoKeys (void);
 void SendKey (uint8_t, uint8_t);
 uint8_t SendKeys (uint8_t *, uint8_t);
 uint8_t USB_GetLEDs (void);
-#line 1 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
-#line 151 "c:/users/vergilium/desktop/gameterminal/gameterminalhid/kb.h"
- void Init_PS2(void);
- unsigned char Reset_PS2(void);
- unsigned char GetState_PS2(void);
- void KeyDecode(unsigned char);
- void PS2_interrupt(void);
- void PS2_Timeout_Interrupt(void);
- unsigned char PS2_Send(unsigned char);
- unsigned char RemarkConsole(unsigned char);
-#line 5 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/usb.c"
+#line 4 "C:/Users/Vergilium/Desktop/GameTerminal/GameTerminalHID/usb.c"
 uint8_t readbuff[64] absolute 0x500;
 uint8_t writebuff[64] absolute 0x540;
 uint8_t reserved=0;
-
-struct SFLG{
- unsigned kb_mode: 1;
- unsigned usb_on: 1;
- unsigned kbBtn_mode: 1;
- unsigned wr_pass: 1;
- unsigned if_pc: 1;
-} sysFlags at CVRCON;
 
 
 
@@ -117,17 +99,12 @@ void USB_ReceiveBuffSet (void){
 
 
 uint8_t SendKeys (uint8_t *keys, uint8_t modifier){
- uint8_t i,
+ uint8_t i = 0,
  cnt = 0;
- memset(writebuff, 0, 8);
  writebuff[0] = modifier;
  writebuff[1] = reserved;
  for(i=0; i<=5; i++){
  if(keys[i] != 0) cnt++;
- if(sysFlags.kb_mode == 1){
- if(keys[i] >=  0x3A  && keys[i] <=  0x45 )
- writebuff[i+2] = RemarkConsole(keys[i]);
- } else
  writebuff[i+2]=keys[i];
  }
  USBDev_HIDWrite(1,writebuff,8);
