@@ -621,6 +621,7 @@ if_conf
 if_func
 if_pc
 if_pc
+if_pc
 if_up
 inarray
 indf0
@@ -709,9 +710,14 @@ ivrst
 ivrst_bit
 kb_mode
 kb_mode
+kb_mode
 kb_parity
 kb_rw
+kbbtn_mode
+kbbtn_mode
+kbbtn_mode
 kbmode
+kbremark
 kbwritebuff
 keycnt
 keycode
@@ -1079,6 +1085,7 @@ re3_bit
 read_write
 read_write_bit
 readbuff
+remarkconsole
 request
 res032
 reserved
@@ -1218,6 +1225,8 @@ swdten
 swdten_bit
 sync
 sync_bit
+sysconfig
+sysflags
 sysflags
 sysflags
 t08bit
@@ -1495,6 +1504,9 @@ usb_hid_cfg_descriptor
 usb_hid_device_descriptor
 usb_hid_langiddesc
 usb_hid_reportdesc
+usb_on
+usb_on
+usb_on
 usb_receivebuffset
 usb_stateinit
 usbdev_clearstallendpoint
@@ -1556,6 +1568,8 @@ wordtostr
 wordtostrwithzeros
 wr
 wr_bit
+wr_pass
+wr_pass
 wr_pass
 wreg
 wren

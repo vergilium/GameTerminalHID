@@ -45,6 +45,8 @@ main
 	EEPROM_SavePassword
 		EEPROM_Write
 	SendKeys
+		memset
+		RemarkConsole
 		USBDev_HIDWrite
 			USBDev_SendPacket
 				Mul_16X16_U

@@ -77,7 +77,7 @@ void EEPROM_SavePassword (uint8_t *pass, uint8_t len, uint8_t stAddr){
 //    Функция стирания пароля в памяти EEPROM
 //    Возврат:        void
 //    Параметры:      uint8_t stAddr - начальный адресс в памяти EEPROM
-//    Описание:       Стирает 36 ячеек памяти EEPROM записуя туда 0xFF
+//    Описание:       Стирает ячейки памяти EEPROM записуя туда 0xFF
 //==============================================================================
 void EEPROM_ClearPassword (uint8_t stAddr, uint8_t len){
    uint8_t i;
